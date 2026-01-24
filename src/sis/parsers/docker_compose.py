@@ -1,21 +1,42 @@
-"""Docker Compose parser for SIS."""
+"""
+Docker Compose parser for SIS
+"""
+from typing import Dict, Any, List, Optional
 import yaml
 
-def parse_file(content: str):
-    """Parse Docker Compose YAML."""
+def parse_docker_compose(content: str, file_format: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Parse Docker Compose file and extract security-relevant configurations.
+    
+    Args:
+        content: Docker Compose YAML content
+        file_format: Optional format specifier (unused for Docker Compose)
+    
+    Returns:
+        List of extracted resources
+    """
+    resources = []
+    
     try:
-        data = yaml.safe_load(content)
-        resources = []
+        config = yaml.safe_load(content)
         
-        if data and 'services' in data:
-            for service_name, service_data in data['services'].items():
-                resources.append({
-                    'kind': 'service',
-                    'name': service_name,
-                    'data': service_data,
-                    'line': 1
-                })
+        if not isinstance(config, dict):
+            return resources
+        
+        # Check for services
+        services = config.get('services', {})
+        
+        for service_name, service_config in services.items():
+            if isinstance(service_config, dict):
+                # Check for security-relevant configurations
+                if 'privileged' in service_config or 'cap_add' in service_config:
+                    resources.append({
+                        'name': service_name,
+                        'type': 'docker_service',
+                        'config': service_config,
+                        'source': 'docker_compose'
+                    })
         
         return resources
-    except:
-        return []
+    except yaml.YAMLError as e:
+        raise ValueError(f"Failed to parse Docker Compose YAML: {str(e)}")

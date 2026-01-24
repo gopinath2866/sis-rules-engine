@@ -1,21 +1,46 @@
-"""Kubernetes parser for SIS."""
+"""
+Kubernetes manifest parser for SIS
+"""
+from typing import Dict, Any, List, Optional
 import yaml
 
-def parse_file(content: str):
-    """Parse Kubernetes YAML."""
+def parse_kubernetes(content: str, file_format: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Parse Kubernetes manifests and extract RBAC resources.
+    
+    Args:
+        content: Kubernetes YAML content
+        file_format: Optional format specifier (unused for Kubernetes)
+    
+    Returns:
+        List of extracted resources
+    """
+    resources = []
+    
     try:
+        # Split YAML documents
         documents = list(yaml.safe_load_all(content))
-        resources = []
         
         for doc in documents:
-            if doc and 'kind' in doc and 'metadata' in doc:
+            if not isinstance(doc, dict):
+                continue
+            
+            kind = doc.get('kind', '')
+            metadata = doc.get('metadata', {})
+            name = metadata.get('name', '')
+            
+            # Extract RBAC resources
+            if any(rbac_kind in kind for rbac_kind in [
+                'ClusterRole', 'ClusterRoleBinding', 'Role', 'RoleBinding', 'ServiceAccount'
+            ]):
                 resources.append({
-                    'kind': doc['kind'],
-                    'name': doc['metadata'].get('name', ''),
-                    'data': doc,
-                    'line': 1
+                    'name': name,
+                    'type': kind,
+                    'spec': doc.get('spec', {}),
+                    'metadata': metadata,
+                    'source': 'kubernetes'
                 })
         
         return resources
-    except:
-        return []
+    except yaml.YAMLError as e:
+        raise ValueError(f"Failed to parse Kubernetes YAML: {str(e)}")
