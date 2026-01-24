@@ -192,29 +192,3 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/compliance
         destination_dir: ./compliance
-        
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    needs: [test, docker-build, compliance-report]
-    if: github.event_name == 'release' && github.event.action == 'published'
-    
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      
-    - name: Download All Artifacts
-      uses: actions/download-artifact@v4
-      
-    - name: Create Release Package
-      run: |
-        mkdir -p release/sis-v${{ github.event.release.tag_name }}
-        cp -r src/ rules/ tests/ docs/ LICENSE README.md requirements.txt pyproject.toml release/sis-v${{ github.event.release.tag_name }}/
-        tar -czf sis-v${{ github.event.release.tag_name }}.tar.gz -C release .
-        
-    - name: Upload Release Assets
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          sis-v${{ github.event.release.tag_name }}.tar.gz
-          junit/canonical-results.xml
