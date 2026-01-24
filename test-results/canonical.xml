@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="26" skipped="0" tests="26" time="0.092" timestamp="2026-01-24T22:23:56.712525+05:30" hostname="sahils-MacBook-Air.local"><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file0]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_01.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_01.json', 'path': '/Users/sahilraj/fork/sis-v1/te...-01'}, 'files': [{'content': 'resource &quot;aws_iam_policy&quot; &quot;p&quot; { policy = &quot;*&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_01.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_01.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_01.json', 'path': '/Users/sahilraj/fork/sis-v1/te...-01'}, 'files': [{'content': 'resource "aws_iam_policy" "p" { policy = "*" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file1]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_02.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_02.json', 'path': '/Users/sahilraj/fork/sis-v1/te...2'}, 'files': [{'content': 'kind: ClusterRole\nrules:\n- apiGroups: [&quot;*&quot;]', 'name': 'k8s.yaml', 'type': 'kubernetes'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_02.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_02.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_02.json', 'path': '/Users/sahilraj/fork/sis-v1/te...2'}, 'files': [{'content': 'kind: ClusterRole\nrules:\n- apiGroups: ["*"]', 'name': 'k8s.yaml', 'type': 'kubernetes'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file2]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_03.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_03.json', 'path': '/Users/sahilraj/fork/sis-v1/te...les': [{'content': 'resource &quot;aws_iam_role&quot; &quot;r&quot; { assume_role_policy = &quot;*&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_03.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_03.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_03.json', 'path': '/Users/sahilraj/fork/sis-v1/te...les': [{'content': 'resource "aws_iam_role" "r" { assume_role_policy = "*" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file3]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_04.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_04.json', 'path': '/Users/sahilraj/fork/sis-v1/te..., 'files': [{'content': 'resource &quot;aws_iam_policy&quot; &quot;p&quot; { name = &quot;admin&quot; }', 'name': 'policy.tf', 'type': 'terraform'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_04.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_04.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_04.json', 'path': '/Users/sahilraj/fork/sis-v1/te..., 'files': [{'content': 'resource "aws_iam_policy" "p" { name = "admin" }', 'name': 'policy.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file4]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_05.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_05.json', 'path': '/Users/sahilraj/fork/sis-v1/te...5'}, 'files': [{'content': 'resource &quot;aws_iam_group&quot; &quot;g&quot; { name = &quot;admins&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_05.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_05.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_05.json', 'path': '/Users/sahilraj/fork/sis-v1/te...5'}, 'files': [{'content': 'resource "aws_iam_group" "g" { name = "admins" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file5]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_06.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_06.json', 'path': '/Users/sahilraj/fork/sis-v1/te... 'files': [{'content': 'resource &quot;aws_iam_user&quot; &quot;u&quot; { force_destroy = true }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_06.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_06.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_06.json', 'path': '/Users/sahilraj/fork/sis-v1/te... 'files': [{'content': 'resource "aws_iam_user" "u" { force_destroy = true }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[admin_override-test_file6]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_07.json&#10;assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_07.json', 'path': '/Users/sahilraj/fork/sis-v1/te...iles': [{'content': 'resource &quot;aws_iam_access_key&quot; &quot;k&quot; { status = &quot;Active&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'admin_override'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_07.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/admin_override/test_admin_07.json
+E           assert 'resources' in {'_metadata': {'category': 'admin_override', 'filename': 'test_admin_07.json', 'path': '/Users/sahilraj/fork/sis-v1/te...iles': [{'content': 'resource "aws_iam_access_key" "k" { status = "Active" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file7]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_01.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_01.json', 'path': '/Users/sahilraj/fork/sis...}, 'files': [{'content': 'resource &quot;aws_iam_user&quot; &quot;u&quot; { name = &quot;root-user&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_01.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_01.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_01.json', 'path': '/Users/sahilraj/fork/sis...}, 'files': [{'content': 'resource "aws_iam_user" "u" { name = "root-user" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file8]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_02.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_02.json', 'path': '/Users/sahilraj/fork/sis..., 'files': [{'content': 'resource &quot;aws_iam_access_key&quot; &quot;k&quot; { user = &quot;root&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_02.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_02.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_02.json', 'path': '/Users/sahilraj/fork/sis..., 'files': [{'content': 'resource "aws_iam_access_key" "k" { user = "root" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file9]" time="0.000"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_03.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_03.json', 'path': '/Users/sahilraj/fork/sis...NT-03'}, 'files': [{'content': 'resource &quot;google_service_account_key&quot; &quot;k&quot; {}', 'name': 'gcp.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_03.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_03.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_03.json', 'path': '/Users/sahilraj/fork/sis...NT-03'}, 'files': [{'content': 'resource "google_service_account_key" "k" {}', 'name': 'gcp.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file10]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_04.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_04.json', 'path': '/Users/sahilraj/fork/sis...NT-04'}, 'files': [{'content': 'resource &quot;azurerm_ad_application&quot; &quot;app&quot; {}', 'name': 'azure.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_04.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_04.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_04.json', 'path': '/Users/sahilraj/fork/sis...NT-04'}, 'files': [{'content': 'resource "azurerm_ad_application" "app" {}', 'name': 'azure.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file11]" time="0.000"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_05.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_05.json', 'path': '/Users/sahilraj/fork/sis..., 'files': [{'content': 'kind: ServiceAccount\nmetadata:\n  name: default', 'name': 'k8s.yaml', 'type': 'kubernetes'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_05.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_05.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_05.json', 'path': '/Users/sahilraj/fork/sis..., 'files': [{'content': 'kind: ServiceAccount\nmetadata:\n  name: default', 'name': 'k8s.yaml', 'type': 'kubernetes'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file12]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_06.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_06.json', 'path': '/Users/sahilraj/fork/sis...[{'content': 'resource &quot;aws_iam_policy_attachment&quot; &quot;a&quot; { roles = [&quot;admin&quot;] }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_06.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_06.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_06.json', 'path': '/Users/sahilraj/fork/sis...[{'content': 'resource "aws_iam_policy_attachment" "a" { roles = ["admin"] }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file13]" time="0.002"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_07.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_07.json', 'path': '/Users/sahilraj/fork/sis... 'files': [{'content': 'resource &quot;aws_iam_role_policy&quot; &quot;p&quot; { role = &quot;root&quot; }', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_07.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_07.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_07.json', 'path': '/Users/sahilraj/fork/sis... 'files': [{'content': 'resource "aws_iam_role_policy" "p" { role = "root" }', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[identity_binding-test_file14]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_08.json&#10;assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_08.json', 'path': '/Users/sahilraj/fork/sis...DENT-08'}, 'files': [{'content': 'resource &quot;aws_iam_group_membership&quot; &quot;g&quot; {}', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'identity_binding'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_08.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/identity_binding/test_irr_ident_08.json
+E           assert 'resources' in {'_metadata': {'category': 'identity_binding', 'filename': 'test_irr_ident_08.json', 'path': '/Users/sahilraj/fork/sis...DENT-08'}, 'files': [{'content': 'resource "aws_iam_group_membership" "g" {}', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file15]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_01.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_01.json', 'path': '/Users/sahilraj/fork/..., 'files': [{'content': 'resource &quot;aws_s3_bucket&quot; &quot;b&quot; { acl = &quot;public-read&quot; }', 'name': 's3.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_01.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_01.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_01.json', 'path': '/Users/sahilraj/fork/..., 'files': [{'content': 'resource "aws_s3_bucket" "b" { acl = "public-read" }', 'name': 's3.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file16]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_02.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_02.json', 'path': '/Users/sahilraj/fork/...': 'resource &quot;aws_s3_bucket&quot; &quot;b&quot; { lifecycle { prevent_destroy = true } }', 'name': 'bucket.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_02.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_02.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_02.json', 'path': '/Users/sahilraj/fork/...': 'resource "aws_s3_bucket" "b" { lifecycle { prevent_destroy = true } }', 'name': 'bucket.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file17]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_03.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_03.json', 'path': '/Users/sahilraj/fork/...[{'content': 'resource &quot;aws_db_instance&quot; &quot;db&quot; { deletion_protection = true }', 'name': 'rds.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_03.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_03.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_03.json', 'path': '/Users/sahilraj/fork/...[{'content': 'resource "aws_db_instance" "db" { deletion_protection = true }', 'name': 'rds.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file18]" time="0.000"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_04.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_04.json', 'path': '/Users/sahilraj/fork/...': [{'content': 'resource &quot;aws_kms_key&quot; &quot;k&quot; { deletion_window_in_days = 30 }', 'name': 'kms.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_04.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_04.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_04.json', 'path': '/Users/sahilraj/fork/...': [{'content': 'resource "aws_kms_key" "k" { deletion_window_in_days = 30 }', 'name': 'kms.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file19]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_05.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_05.json', 'path': '/Users/sahilraj/fork/...iles': [{'content': 'resource &quot;aws_cloudtrail&quot; &quot;t&quot; { enable_logging = true }', 'name': 'log.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_05.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_05.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_05.json', 'path': '/Users/sahilraj/fork/...iles': [{'content': 'resource "aws_cloudtrail" "t" { enable_logging = true }', 'name': 'log.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file20]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_06.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_06.json', 'path': '/Users/sahilraj/fork/...'IRR-DEC-06'}, 'files': [{'content': 'resource &quot;aws_route53_zone&quot; &quot;z&quot; {}', 'name': 'route53.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_06.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_06.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_06.json', 'path': '/Users/sahilraj/fork/...'IRR-DEC-06'}, 'files': [{'content': 'resource "aws_route53_zone" "z" {}', 'name': 'route53.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file21]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_07.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_07.json', 'path': '/Users/sahilraj/fork/...'files': [{'content': 'resource &quot;aws_vpc&quot; &quot;v&quot; { cidr_block = &quot;10.0.0.0/16&quot; }', 'name': 'vpc.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_07.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_07.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_07.json', 'path': '/Users/sahilraj/fork/...'files': [{'content': 'resource "aws_vpc" "v" { cidr_block = "10.0.0.0/16" }', 'name': 'vpc.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file22]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_08.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_08.json', 'path': '/Users/sahilraj/fork/...id': 'IRR-DEC-08'}, 'files': [{'content': 'resource &quot;aws_eks_cluster&quot; &quot;c&quot; {}', 'name': 'eks.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_08.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_08.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_08.json', 'path': '/Users/sahilraj/fork/...id': 'IRR-DEC-08'}, 'files': [{'content': 'resource "aws_eks_cluster" "c" {}', 'name': 'eks.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file23]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_09.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_09.json', 'path': '/Users/sahilraj/fork/...'}, 'files': [{'content': 'resource &quot;aws_iam_account_password_policy&quot; &quot;p&quot; {}', 'name': 'iam.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_09.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_09.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_09.json', 'path': '/Users/sahilraj/fork/...'}, 'files': [{'content': 'resource "aws_iam_account_password_policy" "p" {}', 'name': 'iam.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_canonical_vector[irreversible_decision-test_file24]" time="0.001"><failure message="AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_10.json&#10;assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_10.json', 'path': '/Users/sahilraj/fork/...0'}, 'files': [{'content': 'resource &quot;aws_organizations_organization&quot; &quot;o&quot; {}', 'name': 'org.tf', 'type': 'terraform'}]}">category = 'irreversible_decision'
+test_file = PosixPath('/Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_10.json')
+
+    @pytest.mark.parametrize("category,test_file", get_test_files())
+    def test_canonical_vector(category, test_file):
+        """Test a canonical test vector"""
+        # Load the test vector
+        test_data = load_test_vector(category, test_file)
+    
+        # Extract test expectations
+        expected_result = test_data.get("should_pass", True)
+        test_name = test_data.get("name", test_file.stem)
+        description = test_data.get("description", "")
+    
+        # For now, just check that the file is valid JSON
+        # TODO: Implement actual rule validation
+        assert isinstance(test_data, dict), f"Invalid test data in {test_file}"
+    
+        # Check required fields
+        required_fields = ["resources", "expected_violations"]
+        for field in required_fields:
+&gt;           assert field in test_data, f"Missing required field: {field} in {test_file}"
+E           AssertionError: Missing required field: resources in /Users/sahilraj/fork/sis-v1/tests/test_vectors/irreversible_decision/test_irr_dec_10.json
+E           assert 'resources' in {'_metadata': {'category': 'irreversible_decision', 'filename': 'test_irr_dec_10.json', 'path': '/Users/sahilraj/fork/...0'}, 'files': [{'content': 'resource "aws_organizations_organization" "o" {}', 'name': 'org.tf', 'type': 'terraform'}]}
+
+tests/canonical_suite.py:66: AssertionError</failure></testcase><testcase classname="tests.canonical_suite" name="test_all_vectors_exist" time="0.000"><failure message="AssertionError: Expected 26 tests, found 25&#10;assert 25 == 26">def test_all_vectors_exist():
+        """Verify we have all 26 canonical test vectors"""
+        test_files = get_test_files()
+        total_tests = len(test_files)
+    
+        print(f"\nTotal canonical tests found: {total_tests}")
+    
+        # Count by category
+        for category in TEST_CATEGORIES:
+            count = len([f for c, f in test_files if c == category])
+            print(f"  {TEST_CATEGORIES[category]}: {count} tests")
+    
+        # Should have 26 tests total (7 ADMIN + 10 IRR-DEC + 9 IRR-IDENT)
+        # Note: Adjust this number based on your actual test count
+        expected_total = 26  # 7 + 10 + 9
+&gt;       assert total_tests == expected_total, \
+            f"Expected {expected_total} tests, found {total_tests}"
+E       AssertionError: Expected 26 tests, found 25
+E       assert 25 == 26
+
+tests/canonical_suite.py:94: AssertionError</failure></testcase></testsuite></testsuites>
