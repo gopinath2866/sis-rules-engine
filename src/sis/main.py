@@ -3,7 +3,7 @@ Main SIS engine module
 """
 import json
 import time
-from typing import Dict, List, Any, Optional, Tuple, cast
+from typing import Dict, List, Any, Optional, Tuple, Union, cast
 from pathlib import Path
 
 from .parsers import parse_content
@@ -22,13 +22,13 @@ def load_rules(rules_path: Optional[str] = None) -> List[Dict[str, Any]]:
         path_obj = Path(rules_path)
     
     with open(path_obj, 'r') as f:
-        rules_data = json.load(f)
+        rules_data: Union[Dict[str, Any], List[Dict[str, Any]]] = json.load(f)
     
     # Handle different formats
     if isinstance(rules_data, dict):
         # If it's a dictionary with a 'rules' key
         if 'rules' in rules_data:
-            rules_list = rules_data['rules']
+            rules_list = cast(List[Dict[str, Any]], rules_data['rules'])
             # Ensure each rule has an 'id' field
             for rule in rules_list:
                 if 'rule_id' in rule and 'id' not in rule:
@@ -37,12 +37,12 @@ def load_rules(rules_path: Optional[str] = None) -> List[Dict[str, Any]]:
         # If it's a dictionary of rule_id -> rule
         else:
             # Convert dict of rules to list
-            rules_list = []
+            converted_rules_list: List[Dict[str, Any]] = []
             for rule_id, rule in rules_data.items():
                 if isinstance(rule, dict):
                     rule['id'] = rule_id  # Ensure id is set
-                    rules_list.append(rule)
-            return rules_list
+                    converted_rules_list.append(rule)
+            return converted_rules_list
     elif isinstance(rules_data, list):
         return rules_data
     else:
