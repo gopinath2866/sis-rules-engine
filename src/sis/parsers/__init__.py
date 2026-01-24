@@ -1,19 +1,24 @@
 """
 Parser modules for different infrastructure-as-code formats
 """
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, List, Optional, Callable, cast
 from .terraform import parse_terraform
 from .kubernetes import parse_kubernetes
 from .cloudformation import parse_cloudformation
 from .docker_compose import parse_docker_compose
 from .arm import parse_arm_template
 
+# Cast each function to the correct type signature
 PARSERS: Dict[str, Callable[[str, Optional[str]], List[Dict[str, Any]]]] = {
-    "terraform": lambda content, _: parse_terraform(content),
-    "kubernetes": lambda content, _: parse_kubernetes(content),
+    "terraform": cast(Callable[[str, Optional[str]], List[Dict[str, Any]]], 
+                     lambda content, _: parse_terraform(content)),
+    "kubernetes": cast(Callable[[str, Optional[str]], List[Dict[str, Any]]], 
+                      lambda content, _: parse_kubernetes(content)),
     "cloudformation": parse_cloudformation,
-    "docker_compose": lambda content, _: parse_docker_compose(content),
-    "arm": lambda content, _: parse_arm_template(content),
+    "docker_compose": cast(Callable[[str, Optional[str]], List[Dict[str, Any]]], 
+                          lambda content, _: parse_docker_compose(content)),
+    "arm": cast(Callable[[str, Optional[str]], List[Dict[str, Any]]], 
+               lambda content, _: parse_arm_template(content)),
 }
 
 def parse_content(

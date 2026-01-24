@@ -1,24 +1,28 @@
 """
 CloudFormation template parser for SIS
 """
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import yaml
 import json
 
-def parse_cloudformation(content: str, file_type: str = "yaml") -> List[Dict[str, Any]]:
+def parse_cloudformation(content: str, file_type: Optional[str] = None) -> List[Dict[str, Any]]:
     """
     Parse CloudFormation template and extract IAM resources.
     
     Args:
         content: CloudFormation template content
-        file_type: Either 'yaml' or 'json'
+        file_type: Either 'yaml' or 'json' (defaults to 'yaml' if None)
     
     Returns:
         List of extracted resources
     """
-    resources = []
+    resources: List[Dict[str, Any]] = []
     
     try:
+        # Default to yaml if not specified
+        if file_type is None:
+            file_type = "yaml"
+        
         if file_type.lower() == "yaml":
             template = yaml.safe_load(content)
         elif file_type.lower() == "json":
