@@ -37,9 +37,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-org/sis-rules-engine"
-Documentation = "https://your-org.github.io/sis-rules-engine"
-Repository = "https://github.com/your-org/sis-rules-engine.git"
+Homepage = "https://github.com/gopinath2866/sis-rules-engine"
+Documentation = "https://gopinath2866.github.io/sis-rules-engine"
+Repository = "https://github.com/gopinath2866/sis-rules-engine.git"
 
 [project.scripts]
 sis-validate = "sis.main:cli"
