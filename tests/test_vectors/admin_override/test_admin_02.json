@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "k8s.yaml",
+    "type": "kubernetes",
+    "content": "kind: ClusterRole\nrules:\n- apiGroups: [\"*\"]"
+  }],
+  "expect": { "rule_id": "ADMIN-02", "count": 1 }
+}

@@ -1,0 +1,1 @@
+{"files":[{"name":"ADMIN-04.tf","type":"terraform","content":"resource \"aws_iam_policy\" \"ADMIN-04\" { policy = '{\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"*\",\"Resource\":\"*\"}]}' }"}]}

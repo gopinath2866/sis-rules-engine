@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "iam.tf",
+    "type": "terraform",
+    "content": "resource \"aws_iam_access_key\" \"k\" { status = \"Active\" }"
+  }],
+  "expect": { "rule_id": "ADMIN-07", "count": 1 }
+}

@@ -1,0 +1,27 @@
+
+**File:** `LICENSE`  
+**SHA-256:** `aadd4e2e0b7a4e3b6f8c5d9e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1`  
+```text
+STATIC IRREVERSIBILITY SCANNER (SIS) v1.0.0
+PROPRIETARY LICENSE
+
+1. GRANT OF LICENSE
+   Licensor grants Licensee a non-exclusive, non-transferable license to:
+   a) Use the SIS artifact for internal scanning
+   b) Deploy SIS as a service for internal teams
+   c) Modify for internal use (derivatives remain proprietary)
+
+2. RESTRICTIONS
+   a) No redistribution of source
+   b) No reverse engineering
+   c) No warranty or support obligations
+   d) No telemetry or data collection required
+
+3. TERM & TERMINATION
+   Perpetual unless breached. No audit rights.
+
+4. DISCLAIMER
+   AS-IS. NO WARRANTIES. NOT RESPONSIBLE FOR INFRASTRUCTURE DECISIONS.
+
+5. GOVERNING LAW
+   Delaware, USA.

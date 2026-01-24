@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "bucket.tf",
+    "type": "terraform",
+    "content": "resource \"aws_s3_bucket\" \"b\" { lifecycle { prevent_destroy = true } }"
+  }],
+  "expect": { "rule_id": "IRR-DEC-02", "count": 1 }
+}

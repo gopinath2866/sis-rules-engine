@@ -1,0 +1,1 @@
+See rules/canonical.json for the 25 sealed rules.

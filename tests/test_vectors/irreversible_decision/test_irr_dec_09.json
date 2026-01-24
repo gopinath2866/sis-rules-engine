@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "iam.tf",
+    "type": "terraform",
+    "content": "resource \"aws_iam_account_password_policy\" \"p\" {}"
+  }],
+  "expect": { "rule_id": "IRR-DEC-09", "count": 1 }
+}

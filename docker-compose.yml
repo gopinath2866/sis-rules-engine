@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  sis-validator:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./rules:/app/rules:ro
+      - ./test_vectors:/app/tests/test_vectors:ro
+    environment:
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=INFO
+    command: uvicorn src.sis.api.endpoints:app --host 0.0.0.0 --port 8000 --reload
+    
+  tests:
+    build: .
+    depends_on:
+      - sis-validator
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./rules:/app/rules:ro
+    environment:
+      - PYTHONPATH=/app/src
+      - SIS_API_URL=http://sis-validator:8000
+    command: >
+      sh -c "sleep 5 && 
+      python -m pytest tests/ -v --junitxml=/app/test-results.xml"
+      
+  compliance:
+    build: .
+    volumes:
+      - ./scripts:/app/scripts:ro
+      - ./rules:/app/rules:ro
+      - ./test-results:/app/test-results
+      - ./reports:/app/reports
+    command: >
+      python scripts/generate_compliance.py
+        --rules /app/rules/canonical.json
+        --test-results /app/test-results
+        --output /app/reports

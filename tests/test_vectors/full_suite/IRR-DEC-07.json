@@ -1,0 +1,1 @@
+{"files":[{"name":"IRR-DEC-07.tf","type":"terraform","content":"resource \"aws_s3_bucket\" \"IRR-DEC-07\" { lifecycle { prevent_destroy = true } }"}]}

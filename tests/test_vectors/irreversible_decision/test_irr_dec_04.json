@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "kms.tf",
+    "type": "terraform",
+    "content": "resource \"aws_kms_key\" \"k\" { deletion_window_in_days = 30 }"
+  }],
+  "expect": { "rule_id": "IRR-DEC-04", "count": 1 }
+}

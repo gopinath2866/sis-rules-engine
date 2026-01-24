@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "rds.tf",
+    "type": "terraform",
+    "content": "resource \"aws_db_instance\" \"db\" { deletion_protection = true }"
+  }],
+  "expect": { "rule_id": "IRR-DEC-03", "count": 1 }
+}

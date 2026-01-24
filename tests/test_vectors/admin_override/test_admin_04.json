@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "policy.tf",
+    "type": "terraform",
+    "content": "resource \"aws_iam_policy\" \"p\" { name = \"admin\" }"
+  }],
+  "expect": { "rule_id": "ADMIN-04", "count": 1 }
+}

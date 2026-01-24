@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "gcp.tf",
+    "type": "terraform",
+    "content": "resource \"google_service_account_key\" \"k\" {}"
+  }],
+  "expect": { "rule_id": "IRR-IDENT-03", "count": 1 }
+}

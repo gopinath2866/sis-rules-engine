@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "name": "log.tf",
+    "type": "terraform",
+    "content": "resource \"aws_cloudtrail\" \"t\" { enable_logging = true }"
+  }],
+  "expect": { "rule_id": "IRR-DEC-05", "count": 1 }
+}
