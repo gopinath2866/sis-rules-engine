@@ -15,7 +15,7 @@ def parse_docker_compose(content: str, file_format: Optional[str] = None) -> Lis
     Returns:
         List of extracted resources
     """
-    resources = []
+    resources: List[Dict[str, Any]] = []
     
     try:
         config = yaml.safe_load(content)

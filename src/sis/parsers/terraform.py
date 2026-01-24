@@ -1,14 +1,15 @@
-# src/sis/parsers/terraform.py
-
+"""
+Terraform parser for SIS
+"""
 import json
+from typing import Dict, Any, List, Optional
 
-def parse_file(content: str):
+def parse_terraform(content: str, file_format: Optional[str] = None) -> List[Dict[str, Any]]:
     """
     Terraform parser stub for SIS.
     Emits deterministic, structural resources to trigger all 25 canonical rules.
     No inference, no guessing.
     """
-
     # --- IRREVERSIBLE DECISION / ADMIN examples ---
     s3_bucket = {
         "kind": "aws_s3_bucket",

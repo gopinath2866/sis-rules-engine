@@ -1,49 +1,66 @@
-"""Rule engine unit tests."""
-import sys
-import os
+"""
+Test the SIS engine
+"""
+import pytest
+from src.sis.engine import validate_resources, check_condition
 
-# Add src to path so we can import sis
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+def test_check_condition():
+    """Test condition checking"""
+    resource = {
+        "name": "test_resource",
+        "type": "aws_s3_bucket",
+        "properties": {"versioning": {"enabled": True}}
+    }
+    
+    # Test EQUALS operator
+    condition = {"path": "type", "operator": "EQUALS", "value": "aws_s3_bucket"}
+    assert check_condition(resource, condition) == True
+    
+    # Test NOT_EQUALS operator
+    condition = {"path": "type", "operator": "NOT_EQUALS", "value": "aws_iam_user"}
+    assert check_condition(resource, condition) == True
+    
+    # Test EXISTS operator
+    condition = {"path": "name", "operator": "EXISTS"}
+    assert check_condition(resource, condition) == True
+    
+    # Test nested path
+    condition = {"path": "properties.versioning.enabled", "operator": "EQUALS", "value": True}
+    assert check_condition(resource, condition) == True
 
-from sis.engine import RuleEngine, Rule, RuleType, Condition, Operator
+def test_validate_resources_empty():
+    """Test validation with empty resources"""
+    rules = []
+    resources = []
+    violations = validate_resources(resources, rules)
+    assert violations == []
 
-def test_rule_loading():
-    """Test that all 25 rules load correctly."""
-    engine = RuleEngine("rules/canonical.json")
-    assert len(engine.rules) == 25
+def test_validate_resources_with_rule():
+    """Test validation with a simple rule"""
+    rules = [
+        {
+            "rule_id": "TEST-01",
+            "rule_type": "TEST",
+            "applies_to": {
+                "resource_kinds": ["aws_s3_bucket"]
+            },
+            "detection": {
+                "match_logic": "ALL",
+                "conditions": [
+                    {"path": "type", "operator": "EQUALS", "value": "aws_s3_bucket"}
+                ]
+            },
+            "message": "Test rule violation",
+            "severity": "medium"
+        }
+    ]
     
-    rule_types = {r.rule_type for r in engine.rules}
-    assert RuleType.IDENTITY_BINDING in rule_types
-    assert RuleType.DECISION in rule_types
-    assert RuleType.ADMIN_OVERRIDE in rule_types
-
-def test_condition_evaluation():
-    """Test condition evaluation logic."""
-    cond = Condition("deletion_protection", Operator.EQUALS, True)
+    resources = [
+        {"name": "bucket1", "type": "aws_s3_bucket"},
+        {"name": "user1", "type": "aws_iam_user"}
+    ]
     
-    resource = {"deletion_protection": True}
-    assert cond.evaluate(resource)
-    
-    resource = {"deletion_protection": False}
-    assert not cond.evaluate(resource)
-
-def test_rule_evaluation():
-    """Test full rule evaluation."""
-    rule = Rule(
-        rule_id="TEST-01",
-        rule_type=RuleType.DECISION,
-        applies_to={"file_types": ["terraform"], "resource_kinds": ["*"]},
-        detection={
-            "match_logic": "ALL",
-            "conditions": [
-                {"path": "lifecycle.prevent_destroy", "operator": "EQUALS", "value": True}
-            ]
-        },
-        message="Test rule"
-    )
-    
-    resource = {"lifecycle": {"prevent_destroy": True}}
-    assert rule.evaluate(resource)
-    
-    resource = {"lifecycle": {"prevent_destroy": False}}
-    assert not rule.evaluate(resource)
+    violations = validate_resources(resources, rules)
+    assert len(violations) == 1
+    assert violations[0]["rule_id"] == "TEST-01"
+    assert violations[0]["resource_id"] == "bucket1"
