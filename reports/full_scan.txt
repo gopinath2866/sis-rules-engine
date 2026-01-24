@@ -1,0 +1,56 @@
+================================================================================
+🔒 SIS Security Scan Report
+================================================================================
+📁 Scan Path: .
+📅 Generated: 2026-01-25 01:33:58
+📊 Total Issues: 6
+
+📈 SEVERITY SUMMARY:
+  🟠 HIGH: 3
+  🟡 MEDIUM: 3
+
+================================================================================
+
+🟠 HIGH SEVERITY (3):
+----------------------------------------
+
+🔸 TF-001: test_bucket
+   📝 S3 bucket has public access
+   📍 ./test_simple.tf:2
+   💡 Set ACL to "private" or use bucket policies.
+
+🔸 TF-002: open_ssh
+   📝 Security group allows all traffic from internet
+   📍 ./test_real.tf:26
+   💡 Restrict CIDR blocks to specific IP ranges.
+
+🔸 TF-002: open_ssh
+   📝 Security group allows all traffic from internet
+   📍 ./test_infra/vulnerable.tf:21
+   💡 Restrict CIDR blocks to specific IP ranges.
+
+🟡 MEDIUM SEVERITY (3):
+----------------------------------------
+
+🔸 TF-004: test_bucket
+   📝 Resource missing encryption configuration
+   📍 ./test_simple.tf:2
+   💡 Enable encryption for data at rest.
+
+🔸 TF-004: public_data
+   📝 Resource missing encryption configuration
+   📍 ./test_real.tf:2
+   💡 Enable encryption for data at rest.
+
+🔸 TF-004: public_data
+   📝 Resource missing encryption configuration
+   📍 ./test_infra/vulnerable.tf:2
+   💡 Enable encryption for data at rest.
+
+================================================================================
+📋 RECOMMENDATIONS:
+1. Fix CRITICAL issues immediately
+2. Review HIGH issues within 7 days
+3. Address MEDIUM/LOW issues in next sprint
+
+🏁 Scan complete!

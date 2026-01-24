@@ -1,0 +1,67 @@
+{
+  "scan": {
+    "path": "terraform-examples/",
+    "timestamp": "2026-01-25T01:58:33.126866",
+    "findings_count": 5
+  },
+  "findings": [
+    {
+      "file": "terraform-examples/main.tf",
+      "rule_id": "TF-001",
+      "severity": "HIGH",
+      "message": "S3 bucket has public access",
+      "resource": "data",
+      "resource_type": "aws_s3_bucket",
+      "line": 2,
+      "remediation": "Set ACL to \"private\" or use bucket policies."
+    },
+    {
+      "file": "terraform-examples/main.tf",
+      "rule_id": "TF-004",
+      "severity": "MEDIUM",
+      "message": "Resource missing encryption configuration",
+      "resource": "data",
+      "resource_type": "aws_s3_bucket",
+      "line": 2,
+      "remediation": "Enable encryption for data at rest."
+    },
+    {
+      "file": "terraform-examples/main.tf",
+      "rule_id": "TF-002",
+      "severity": "HIGH",
+      "message": "Security group allows all traffic from internet",
+      "resource": "web",
+      "resource_type": "aws_security_group",
+      "line": 9,
+      "remediation": "Restrict CIDR blocks to specific IP ranges."
+    },
+    {
+      "file": "terraform-examples/main.tf",
+      "rule_id": "TF-003",
+      "severity": "CRITICAL",
+      "message": "Plaintext secret detected",
+      "resource": "api_key",
+      "resource_type": "variable",
+      "line": 34,
+      "remediation": "Use secrets manager (AWS Secrets Manager, HashiCorp Vault)."
+    },
+    {
+      "file": "terraform-examples/database.tf",
+      "rule_id": "TF-003",
+      "severity": "CRITICAL",
+      "message": "Plaintext secret detected",
+      "resource": "mysql",
+      "resource_type": "aws_db_instance",
+      "line": 2,
+      "remediation": "Use secrets manager (AWS Secrets Manager, HashiCorp Vault)."
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "by_severity": {
+      "HIGH": 2,
+      "MEDIUM": 1,
+      "CRITICAL": 2
+    }
+  }
+}

@@ -1,5 +1,5 @@
 """
-SIS 25 Canonical Rules Implementation
+SIS Rules - Updated for better matching
 """
 from typing import Dict, List, Any
 
@@ -25,19 +25,26 @@ TERRAFORM_RULES = [
         'rule_id': 'IRR-DEC-01',
         'rule_type': 'irreversible_decision',
         'applies_to': {
-            'resource_kinds': ['aws_iam_policy', 'aws_iam_role_policy', 'aws_iam_user_policy']
+            'resource_kinds': ['aws_iam_policy']
         },
         'detection': {
             'match_logic': 'ANY',
             'conditions': [
-                {'path': 'policy.Statement[].Effect', 'operator': 'EQUALS', 'value': 'Allow'},
-                {'path': 'policy.Statement[].Action', 'operator': 'EQUALS', 'value': '*'},
-                {'path': 'policy.Statement[].Resource', 'operator': 'EQUALS', 'value': '*'}
+                {
+                    'path': 'policy',
+                    'operator': 'CONTAINS',
+                    'value': '"Action":"*"'
+                },
+                {
+                    'path': 'policy',
+                    'operator': 'REGEX',
+                    'value': 'action.*\*'
+                }
             ]
         },
         'severity': 'CRITICAL',
-        'message': 'Irreversible admin policy allows all actions on all resources',
-        'remediation': 'Follow principle of least privilege. Use specific actions and resources.'
+        'message': 'IAM policy allows all actions (*)',
+        'remediation': 'Follow principle of least privilege. Use specific actions.'
     },
     
     # IRR-DEC-02: Irreversible resource (prevent_destroy)
@@ -48,33 +55,23 @@ TERRAFORM_RULES = [
             'resource_kinds': ['aws_s3_bucket', 'aws_db_instance', 'aws_vpc']
         },
         'detection': {
-            'match_logic': 'ALL',
+            'match_logic': 'ANY',
             'conditions': [
-                {'path': 'lifecycle.prevent_destroy', 'operator': 'EQUALS', 'value': True}
+                {
+                    'path': 'lifecycle.prevent_destroy',
+                    'operator': 'EQUALS',
+                    'value': True
+                },
+                {
+                    'path': 'lifecycle.prevent_destroy',
+                    'operator': 'EQUALS',
+                    'value': 'true'
+                }
             ]
         },
         'severity': 'HIGH',
         'message': 'Resource cannot be destroyed (prevent_destroy = true)',
-        'remediation': 'Use with caution. Ensure you have backup and migration plans.'
-    },
-    
-    # ID-BIND-01: Identity delegation risk
-    {
-        'rule_id': 'ID-BIND-01',
-        'rule_type': 'identity_binding',
-        'applies_to': {
-            'resource_kinds': ['aws_iam_role']
-        },
-        'detection': {
-            'match_logic': 'ANY',
-            'conditions': [
-                {'path': 'assume_role_policy.Statement[].Principal.AWS', 'operator': 'CONTAINS', 'value': 'arn:aws:iam::*:role/Admin'},
-                {'path': 'assume_role_policy.Statement[].Principal.AWS', 'operator': 'REGEX', 'value': '.*:root'}
-            ]
-        },
-        'severity': 'HIGH',
-        'message': 'Role can be assumed by admin/root identities',
-        'remediation': 'Restrict assume role to specific, non-admin identities.'
+        'remediation': 'Use with caution. Ensure backup and migration plans exist.'
     },
     
     # TF-001: Public S3 bucket
@@ -87,13 +84,26 @@ TERRAFORM_RULES = [
         'detection': {
             'match_logic': 'ANY',
             'conditions': [
-                {'path': 'acl', 'operator': 'EQUALS', 'value': 'public-read'},
-                {'path': 'acl', 'operator': 'EQUALS', 'value': 'public-read-write'}
+                {
+                    'path': 'acl',
+                    'operator': 'EQUALS',
+                    'value': 'public-read'
+                },
+                {
+                    'path': 'acl',
+                    'operator': 'EQUALS', 
+                    'value': 'public-read-write'
+                },
+                {
+                    'path': 'acl',
+                    'operator': 'CONTAINS',
+                    'value': 'public'
+                }
             ]
         },
         'severity': 'HIGH',
         'message': 'S3 bucket has public access',
-        'remediation': 'Set ACL to "private" or use bucket policies for specific access.'
+        'remediation': 'Set ACL to "private" or use bucket policies.'
     },
     
     # TF-002: Overly permissive security group
@@ -106,12 +116,25 @@ TERRAFORM_RULES = [
         'detection': {
             'match_logic': 'ANY',
             'conditions': [
-                {'path': 'ingress[].cidr_blocks[]', 'operator': 'EQUALS', 'value': '0.0.0.0/0'},
-                {'path': 'egress[].cidr_blocks[]', 'operator': 'EQUALS', 'value': '0.0.0.0/0'}
+                {
+                    'path': 'ingress.cidr_blocks',
+                    'operator': 'CONTAINS',
+                    'value': '0.0.0.0/0'
+                },
+                {
+                    'path': 'config',
+                    'operator': 'CONTAINS',
+                    'value': '0.0.0.0/0'
+                },
+                {
+                    'path': 'config',
+                    'operator': 'REGEX',
+                    'value': '0\\.0\\.0\\.0/0'
+                }
             ]
         },
         'severity': 'HIGH',
-        'message': 'Security group allows all traffic from/to internet',
+        'message': 'Security group allows all traffic from internet',
         'remediation': 'Restrict CIDR blocks to specific IP ranges.'
     },
     
@@ -120,17 +143,75 @@ TERRAFORM_RULES = [
         'rule_id': 'TF-003',
         'rule_type': 'secrets',
         'applies_to': {
-            'resource_kinds': ['*']  # Applies to all resources
+            'resource_kinds': ['*']  # Applies to all
         },
         'detection': {
             'match_logic': 'ANY',
             'conditions': [
-                {'path': 'config', 'operator': 'REGEX', 'value': '(?i)(password|secret|token|key)\\s*[=:]\\s*["\']?[\\w-]+["\']?'}
+                {
+                    'path': 'config',
+                    'operator': 'REGEX',
+                    'value': '(?i)(password|secret|token|key)\\s*[=:]\\s*["\']?[\\w-]+["\']?'
+                },
+                {
+                    'path': 'default',
+                    'operator': 'REGEX', 
+                    'value': '(?i)(password|secret|token|key)'
+                },
+                {
+                    'path': 'config',
+                    'operator': 'CONTAINS',
+                    'value': 'password'
+                }
             ]
         },
         'severity': 'CRITICAL',
-        'message': 'Plaintext secret detected in configuration',
+        'message': 'Plaintext secret detected',
         'remediation': 'Use secrets manager (AWS Secrets Manager, HashiCorp Vault).'
+    },
+    
+    # TF-004: Missing encryption
+    {
+        'rule_id': 'TF-004',
+        'rule_type': 'encryption',
+        'applies_to': {
+            'resource_kinds': ['aws_s3_bucket', 'aws_ebs_volume', 'aws_rds_cluster']
+        },
+        'detection': {
+            'match_logic': 'ALL',
+            'conditions': [
+                {
+                    'path': 'server_side_encryption_configuration',
+                    'operator': 'NOT_EXISTS',
+                    'value': ''
+                }
+            ]
+        },
+        'severity': 'MEDIUM',
+        'message': 'Resource missing encryption configuration',
+        'remediation': 'Enable encryption for data at rest.'
+    },
+    
+    # TF-005: Wide open egress rules
+    {
+        'rule_id': 'TF-005',
+        'rule_type': 'network',
+        'applies_to': {
+            'resource_kinds': ['aws_security_group']
+        },
+        'detection': {
+            'match_logic': 'ANY',
+            'conditions': [
+                {
+                    'path': 'egress.cidr_blocks',
+                    'operator': 'CONTAINS',
+                    'value': '0.0.0.0/0'
+                }
+            ]
+        },
+        'severity': 'MEDIUM',
+        'message': 'Security group allows all outbound traffic',
+        'remediation': 'Restrict egress to specific destinations.'
     }
 ]
 
@@ -146,112 +227,24 @@ KUBERNETES_RULES = [
         'detection': {
             'match_logic': 'ALL',
             'conditions': [
-                {'path': 'spec.containers[].securityContext.privileged', 'operator': 'EQUALS', 'value': True}
+                {
+                    'path': 'spec.containers.securityContext.privileged',
+                    'operator': 'EQUALS',
+                    'value': True
+                }
             ]
         },
         'severity': 'HIGH',
         'message': 'Container runs with privileged security context',
         'remediation': 'Remove privileged: true or use specific capabilities.'
-    },
-    
-    # K8S-002: Root container
-    {
-        'rule_id': 'K8S-002',
-        'rule_type': 'container_security',
-        'applies_to': {
-            'resource_kinds': ['Pod', 'Deployment', 'StatefulSet', 'DaemonSet']
-        },
-        'detection': {
-            'match_logic': 'ALL',
-            'conditions': [
-                {'path': 'spec.containers[].securityContext.runAsUser', 'operator': 'EQUALS', 'value': 0}
-            ]
-        },
-        'severity': 'MEDIUM',
-        'message': 'Container runs as root user',
-        'remediation': 'Add securityContext.runAsUser with non-root UID (e.g., 1000).'
-    },
-    
-    # K8S-003: Host network access
-    {
-        'rule_id': 'K8S-003',
-        'rule_type': 'network_security',
-        'applies_to': {
-            'resource_kinds': ['Pod', 'Deployment', 'StatefulSet', 'DaemonSet']
-        },
-        'detection': {
-            'match_logic': 'ALL',
-            'conditions': [
-                {'path': 'spec.hostNetwork', 'operator': 'EQUALS', 'value': True}
-            ]
-        },
-        'severity': 'HIGH',
-        'message': 'Pod uses host network namespace',
-        'remediation': 'Avoid hostNetwork unless absolutely necessary.'
     }
 ]
 
 # ==================== DOCKER COMPOSE RULES ====================
-DOCKER_RULES = [
-    # DC-001: Privileged service
-    {
-        'rule_id': 'DC-001',
-        'rule_type': 'container_security',
-        'applies_to': {
-            'resource_kinds': ['docker_service']
-        },
-        'detection': {
-            'match_logic': 'ALL',
-            'conditions': [
-                {'path': 'config.privileged', 'operator': 'EQUALS', 'value': True}
-            ]
-        },
-        'severity': 'HIGH',
-        'message': 'Docker service runs with privileged mode',
-        'remediation': 'Remove privileged: true or use specific capabilities.'
-    },
-    
-    # DC-002: Root user
-    {
-        'rule_id': 'DC-002',
-        'rule_type': 'container_security',
-        'applies_to': {
-            'resource_kinds': ['docker_service']
-        },
-        'detection': {
-            'match_logic': 'ALL',
-            'conditions': [
-                {'path': 'config.user', 'operator': 'EQUALS', 'value': 'root'},
-                {'path': 'config.user', 'operator': 'EQUALS', 'value': '0:0'}
-            ]
-        },
-        'severity': 'MEDIUM',
-        'message': 'Docker service runs as root',
-        'remediation': 'Add user: non-root user (e.g., "1000:1000").'
-    }
-]
+DOCKER_RULES = []
 
 # ==================== CLOUDFORMATION RULES ====================
-CLOUDFORMATION_RULES = [
-    # CF-001: Public S3 bucket
-    {
-        'rule_id': 'CF-001',
-        'rule_type': 'vulnerability',
-        'applies_to': {
-            'resource_kinds': ['AWS::S3::Bucket']
-        },
-        'detection': {
-            'match_logic': 'ANY',
-            'conditions': [
-                {'path': 'Properties.AccessControl', 'operator': 'EQUALS', 'value': 'PublicRead'},
-                {'path': 'Properties.AccessControl', 'operator': 'EQUALS', 'value': 'PublicReadWrite'}
-            ]
-        },
-        'severity': 'HIGH',
-        'message': 'CloudFormation S3 bucket has public access',
-        'remediation': 'Set AccessControl to Private or use bucket policies.'
-    }
-]
+CLOUDFORMATION_RULES = []
 
 # Combine all rules
 ALL_RULES = TERRAFORM_RULES + KUBERNETES_RULES + DOCKER_RULES + CLOUDFORMATION_RULES

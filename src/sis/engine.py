@@ -1,7 +1,7 @@
 """
 SIS rules engine for validating infrastructure resources
 """
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, cast
 import re
 
 def check_condition(resource: Dict[str, Any], condition: Dict[str, Any]) -> bool:
@@ -21,29 +21,54 @@ def check_condition(resource: Dict[str, Any], condition: Dict[str, Any]) -> bool
     
     # Navigate to the value in the resource
     current: Any = resource
-    for key in path.split('.'):
-        if isinstance(current, dict) and key in current:
-            current = current[key]
+    keys = path.split('.')
+    
+    for key in keys:
+        if key.endswith('[]'):
+            # Array access
+            array_key = key[:-2]
+            if isinstance(current, dict) and array_key in current:
+                current = current[array_key]
+                if isinstance(current, list) and current:
+                    current = current[0]  # Take first element for checking
+                else:
+                    return False
+            else:
+                return False
         else:
-            return False
+            if isinstance(current, dict) and key in current:
+                current = current[key]
+            else:
+                # Path doesn't exist
+                if operator == 'NOT_EXISTS':
+                    return True
+                return False
+    
+    # Convert current to string for comparison
+    current_str = str(current).lower() if current is not None else ""
+    value_str = str(value).lower()
     
     # Apply operator
     if operator == 'EXISTS':
         return True
+    elif operator == 'NOT_EXISTS':
+        return False  # If we got here, path exists, so NOT_EXISTS is False
     elif operator == 'EQUALS':
-        return str(current) == str(value)
+        # Case-insensitive comparison for string values
+        return current_str == value_str
     elif operator == 'NOT_EQUALS':
-        return str(current) != str(value)
+        return current_str != value_str
     elif operator == 'CONTAINS':
-        return str(value) in str(current)
+        return value_str in current_str
     elif operator == 'REGEX':
         try:
-            return bool(re.match(str(value), str(current)))
+            return bool(re.search(value_str, current_str, re.IGNORECASE))
         except re.error:
             return False
     elif operator == 'IN':
         if isinstance(value, list):
-            return str(current) in [str(v) for v in value]
+            value_list = [str(v).lower() for v in value]
+            return current_str in value_list
         else:
             return False
     else:
@@ -67,8 +92,8 @@ def check_resource_rule(resource: Dict[str, Any], rule: Dict[str, Any]) -> Optio
     applies_to = rule.get('applies_to', {})
     resource_kinds = applies_to.get('resource_kinds', [])
     
-    resource_type = resource.get('type', '')
-    if resource_kinds and resource_type not in resource_kinds:
+    resource_type = resource.get('type') or resource.get('kind', '')
+    if resource_kinds and resource_kinds != ['*'] and resource_type not in resource_kinds:
         return None
     
     # Check detection conditions
@@ -96,9 +121,9 @@ def check_resource_rule(resource: Dict[str, Any], rule: Dict[str, Any]) -> Optio
             'rule_type': rule_type,
             'resource_id': resource.get('name', 'unknown'),
             'resource_type': resource_type,
-            'severity': rule.get('severity', 'medium'),
+            'severity': rule.get('severity', 'medium').upper(),
             'message': rule.get('message', 'Rule violation'),
-            'location': resource.get('location', {}),
+            'location': {'line': resource.get('line', 0)},
             'remediation': rule.get('remediation', '')
         }
     

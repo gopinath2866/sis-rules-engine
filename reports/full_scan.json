@@ -1,0 +1,75 @@
+{
+  "scan": {
+    "path": ".",
+    "findings_count": 6
+  },
+  "findings": [
+    {
+      "file": "./test_simple.tf",
+      "rule_id": "TF-001",
+      "severity": "HIGH",
+      "message": "S3 bucket has public access",
+      "resource": "test_bucket",
+      "resource_type": "aws_s3_bucket",
+      "line": 2,
+      "remediation": "Set ACL to \"private\" or use bucket policies."
+    },
+    {
+      "file": "./test_simple.tf",
+      "rule_id": "TF-004",
+      "severity": "MEDIUM",
+      "message": "Resource missing encryption configuration",
+      "resource": "test_bucket",
+      "resource_type": "aws_s3_bucket",
+      "line": 2,
+      "remediation": "Enable encryption for data at rest."
+    },
+    {
+      "file": "./test_real.tf",
+      "rule_id": "TF-004",
+      "severity": "MEDIUM",
+      "message": "Resource missing encryption configuration",
+      "resource": "public_data",
+      "resource_type": "aws_s3_bucket",
+      "line": 2,
+      "remediation": "Enable encryption for data at rest."
+    },
+    {
+      "file": "./test_real.tf",
+      "rule_id": "TF-002",
+      "severity": "HIGH",
+      "message": "Security group allows all traffic from internet",
+      "resource": "open_ssh",
+      "resource_type": "aws_security_group",
+      "line": 26,
+      "remediation": "Restrict CIDR blocks to specific IP ranges."
+    },
+    {
+      "file": "./test_infra/vulnerable.tf",
+      "rule_id": "TF-004",
+      "severity": "MEDIUM",
+      "message": "Resource missing encryption configuration",
+      "resource": "public_data",
+      "resource_type": "aws_s3_bucket",
+      "line": 2,
+      "remediation": "Enable encryption for data at rest."
+    },
+    {
+      "file": "./test_infra/vulnerable.tf",
+      "rule_id": "TF-002",
+      "severity": "HIGH",
+      "message": "Security group allows all traffic from internet",
+      "resource": "open_ssh",
+      "resource_type": "aws_security_group",
+      "line": 21,
+      "remediation": "Restrict CIDR blocks to specific IP ranges."
+    }
+  ],
+  "summary": {
+    "CRITICAL": 0,
+    "HIGH": 3,
+    "MEDIUM": 3,
+    "LOW": 0,
+    "UNKNOWN": 0
+  }
+}
