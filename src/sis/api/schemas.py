@@ -1,59 +1,53 @@
-"""Pydantic schemas for SIS (v2-compatible)."""
+"""
+Pydantic schemas for SIS API
+"""
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
 from enum import Enum
 
-class FileType(str, Enum):
-    TERRAFORM = "terraform"
-    CLOUDFORMATION = "cloudformation"
-    KUBERNETES = "kubernetes"
-    DOCKER_COMPOSE = "docker_compose"
-    ARM = "arm"
-
-class RuleType(str, Enum):
-    IDENTITY_BINDING = "IRREVERSIBLE_IDENTITY_BINDING"
-    DECISION = "IRREVERSIBLE_DECISION"
-    ADMIN_OVERRIDE = "ADMIN_OVERRIDE_DEPENDENCY"
-
-class ScanFile(BaseModel):
-    name: str = Field(..., max_length=255, pattern=r'^[a-zA-Z0-9_\-\.]+$')
-    type: FileType
-    content: str = Field(..., max_length=1048576)
-
-class ScanRequest(BaseModel):
-    scan_id: Optional[str] = Field(
-        None,
-        pattern=r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
-    )
-    files: List[ScanFile] = Field(..., max_items=100)
+class Severity(str, Enum):
+    CRITICAL = "critical"
+    HIGH = "high" 
+    MEDIUM = "medium"
+    LOW = "low"
+    INFO = "info"
 
 class Finding(BaseModel):
-    rule_id: str
-    rule_type: RuleType
-    file: str
-    line: int
-    resource_kind: str
-    resource_name: str
-    message: str
-
-class Summary(BaseModel):
-    total_files: int
-    total_findings: int
-    by_type: Dict[RuleType, int]
+    rule_id: str = Field(...)
+    resource_id: str = Field(...)
+    resource_type: str = Field(...)
+    severity: Severity = Field(...)
+    message: str = Field(...)
+    location: Optional[Dict[str, Any]] = None
+    remediation: Optional[str] = None
 
 class FileError(BaseModel):
-    file: str
-    error: str
+    file_path: str = Field(...)
+    error: str = Field(...)
+
+class Summary(BaseModel):
+    total_resources: int = Field(...)
+    total_violations: int = Field(...)
+    violations_by_severity: Dict[str, int] = Field(...)
+    rules_evaluated: List[str] = Field(...)
+
+class ScanRequest(BaseModel):
+    files: List[Dict[str, Any]] = Field(...)
 
 class ScanResponse(BaseModel):
-    scan_id: str
-    timestamp: str
-    scanner_version: str
-    findings: List[Finding]
-    summary: Summary
-    errors: List[FileError]
+    findings: List[Finding] = Field(...)
+    summary: Summary = Field(...)
+    errors: List[FileError] = Field(default_factory=list)
 
-class ErrorResponse(BaseModel):
-    error: str
-    message: str
-    retry_after: Optional[int] = None
+class HealthResponse(BaseModel):
+    status: str = Field(...)
+    version: str = Field(...)
+    uptime: Optional[float] = None
+
+class Rule(BaseModel):
+    id: str = Field(...)
+    name: str = Field(...)
+    description: str = Field(...)
+    type: str = Field(...)
+    severity: Severity = Field(...)
+    pattern: Dict[str, Any] = Field(...)

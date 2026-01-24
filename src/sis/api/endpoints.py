@@ -1,11 +1,71 @@
-"""API endpoints for SIS."""
-from fastapi import APIRouter, Depends, HTTPException
-from sis.api.schemas import ScanRequest, ScanResponse
+"""
+FastAPI endpoints for SIS engine
+"""
+from typing import Optional
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+import time
 
-router = APIRouter(prefix="/v1", tags=["scan"])
+from .schemas import ScanRequest, ScanResponse, HealthResponse
+from ..main import scan_files
 
-@router.post("/scan", response_model=ScanResponse)
-async def scan_endpoint(request: ScanRequest):
-    """Scan files endpoint."""
-    from sis.main import scan_files
-    return await scan_files(request)
+# Create FastAPI app
+app = FastAPI(
+    title="SIS Rules Engine API",
+    description="Security Isolation Standard Rules Validation API",
+    version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Track startup time
+startup_time = time.time()
+
+@app.get("/health")
+async def health_check() -> HealthResponse:
+    uptime = time.time() - startup_time
+    return HealthResponse(
+        status="healthy",
+        version="1.0.0",
+        uptime=uptime
+    )
+
+@app.post("/validate", response_model=ScanResponse)
+async def validate_files(request: ScanRequest, http_request: Request) -> ScanResponse:
+    try:
+        # Extract client IP for rate limiting
+        client_ip = http_request.client.host if http_request.client else "unknown"
+        
+        # Scan files
+        response = scan_files(
+            files=request.files,
+            client_id=client_ip,
+            rate_limit=False  # Disable rate limiting for now
+        )
+        
+        return response
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error: {str(e)}"
+        )
+
+@app.get("/rules")
+async def get_rules() -> dict:
+    from ..main import load_rules
+    try:
+        rules = load_rules()
+        return {"rules": rules}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to load rules: {str(e)}"
+        )

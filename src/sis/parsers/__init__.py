@@ -1,28 +1,42 @@
-"""Parser dispatcher for SIS."""
-from .terraform import parse_file as parse_terraform
-from .cloudformation import parse_file as parse_cloudformation
-from .kubernetes import parse_file as parse_kubernetes
-from .docker_compose import parse_file as parse_docker_compose
-from .arm import parse_file as parse_arm
+"""
+Parser modules for different infrastructure-as-code formats
+"""
+from typing import Dict, Any, List, Optional, Callable
+from .terraform import parse_terraform
+from .kubernetes import parse_kubernetes
+from .cloudformation import parse_cloudformation
+from .docker_compose import parse_docker_compose
+from .arm import parse_arm_template
 
-def parse_file(file_type: str, content: str):
+PARSERS: Dict[str, Callable[[str, Optional[str]], List[Dict[str, Any]]]] = {
+    "terraform": lambda content, _: parse_terraform(content),
+    "kubernetes": lambda content, _: parse_kubernetes(content),
+    "cloudformation": parse_cloudformation,
+    "docker_compose": lambda content, _: parse_docker_compose(content),
+    "arm": lambda content, _: parse_arm_template(content),
+}
+
+def parse_content(
+    content: str, 
+    file_type: str, 
+    file_format: Optional[str] = None
+) -> List[Dict[str, Any]]:
     """
-    Dispatch parsing based on file type.
-    Returns a list of dicts, each containing:
-    - kind: resource type
-    - name: resource name
-    - line: line number (if available)
-    - data: parsed resource data
+    Parse infrastructure-as-code content based on file type.
+    
+    Args:
+        content: File content as string
+        file_type: Type of file (terraform, kubernetes, etc.)
+        file_format: Optional format specifier (e.g., 'yaml' for CloudFormation)
+    
+    Returns:
+        List of extracted resources
+    
+    Raises:
+        ValueError: If parser not found or parsing fails
     """
-    if file_type == "terraform":
-        return parse_terraform(content)
-    elif file_type == "cloudformation":
-        return parse_cloudformation(content)
-    elif file_type == "kubernetes":
-        return parse_kubernetes(content)
-    elif file_type == "docker_compose":
-        return parse_docker_compose(content)
-    elif file_type == "arm":
-        return parse_arm(content)
-    else:
+    if file_type not in PARSERS:
         raise ValueError(f"Unsupported file type: {file_type}")
+    
+    parser = PARSERS[file_type]
+    return parser(content, file_format)

@@ -47,3 +47,18 @@ docker run -p 8000:8000 sis:v1.0.0
 
 # Run via docker-compose
 docker-compose up --build
+## 🔗 Quick Links
+
+- **CI/CD Status**: [![SIS Validation](https://github.com/gopinath2866/sis-rules-engine/actions/workflows/sis-validation.yml/badge.svg)](https://github.com/gopinath2866/sis-rules-engine/actions)
+- **Compliance Dashboard**: [![GitHub Pages](https://img.shields.io/badge/docs-GitHub_Pages-blue)](https://gopinath2866.github.io/sis-rules-engine/compliance/)
+- **Docker Image**: [![Docker Image](https://img.shields.io/badge/docker-ghcr.io%2Fgopinath2866%2Fsis--validator-blue)](https://ghcr.io/gopinath2866/sis-rules-engine/sis-validator)
+- **Latest Release**: [![GitHub release](https://img.shields.io/github/v/release/gopinath2866/sis-rules-engine)](https://github.com/gopinath2866/sis-rules-engine/releases)
+
+## 🚀 Features
+
+✅ **Full CI/CD Pipeline** - Automated testing, linting, and deployment  
+✅ **26 Canonical Tests** - Complete test suite for all SIS rules  
+✅ **Compliance Dashboard** - Interactive reports on GitHub Pages  
+✅ **Docker Ready** - Containerized deployment  
+✅ **Multi-Python Support** - Tested on Python 3.9-3.12  
+✅ **Production Ready** - Type checking, formatting, and quality gates
