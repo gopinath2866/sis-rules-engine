@@ -57,6 +57,9 @@ SIS is intentionally scoped. It may **not** be the right tool if:
 * You expect SIS to detect **application logic bugs** in source code (use static analyzers instead).
 
 SIS is designed for **static, pre-deployment analysis** of rule and policy configurations.
+## Free Security Audit
+We offer a limited number of **free SIS-based security audits** for rule and policy configurations.  
+See [FREE_AUDIT.md](./FREE_AUDIT.md) to request one.
 
 # Static Irreversibility Scanner (SIS) v1.0.0
 

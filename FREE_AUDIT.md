@@ -1,0 +1,94 @@
+# Free SIS Security Audit (Limited)
+
+We’re offering a **free security audit** for teams using rule-based or policy-driven systems.
+
+This audit uses **SIS (Security Inspection System)** to statically analyze your rule configurations and identify security risks **before they reach production**.
+
+---
+
+## What You’ll Get
+
+* A static scan of your rule or policy configurations using SIS
+* Identified issues with:
+
+  * Severity
+  * File / rule location
+  * Explanation of risk
+* A short, written report (PDF or Markdown)
+* Optional follow-up call to discuss findings
+
+**No automated emails. No upsell pressure.**
+
+---
+
+## What We Can Review
+
+Examples include:
+
+* OPA / Rego policies
+* AWS IAM policies
+* Custom RBAC / ABAC rule files
+* Decision tables and authorization configs
+* SaaS policy or rules-engine definitions
+
+If it’s **rule-based and security-sensitive**, it’s likely a fit.
+
+---
+
+## What We Don’t Need
+
+* No access to running systems
+* No credentials
+* No production secrets
+
+All analysis is **static** and can be run on:
+
+* Redacted files
+* Sample configurations
+* Non-production rule sets
+
+---
+
+## Eligibility (Please Read)
+
+This free audit is intended for:
+
+* SaaS teams
+* Platform / infrastructure teams
+* Security-conscious developers
+
+We may decline requests that:
+
+* Are clearly out of scope
+* Require runtime access
+* Expect vulnerability exploitation or pentesting
+
+---
+
+## How to Request an Audit
+
+Email or message with:
+
+1. Brief description of your system
+2. Type of rules/policies used
+3. Approximate size (number of files / rules)
+
+**Contact:**
+📧 Email: `gopi0nath2929@gmail.com`
+or
+💬 GitHub Issue: open an issue with title **[AUDIT REQUEST]**
+
+(First **10** qualified requests only.)
+
+---
+
+## What Happens Next
+
+1. We confirm scope
+2. You share rule files (or samples)
+3. SIS scan is performed
+4. You receive a confidential report
+
+---
+
+*Last updated: 2026-01-25*
