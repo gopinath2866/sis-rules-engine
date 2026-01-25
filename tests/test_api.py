@@ -1,12 +1,15 @@
 """
 Test SIS API endpoints
 """
+
 import pytest
 from fastapi.testclient import TestClient
+
 from src.sis.api.endpoints import app
 
 # Create test client with the app
 client = TestClient(app)
+
 
 def test_health_check():
     """Test health check endpoint"""
@@ -16,6 +19,7 @@ def test_health_check():
     assert data["status"] == "healthy"
     assert "version" in data
 
+
 def test_get_rules():
     """Test rules endpoint"""
     response = client.get("/rules")
@@ -23,6 +27,7 @@ def test_get_rules():
     data = response.json()
     assert "rules" in data
     assert isinstance(data["rules"], list)
+
 
 def test_validate_endpoint():
     """Test validate endpoint with sample data"""
@@ -35,10 +40,10 @@ resource "aws_s3_bucket" "public_bucket" {
   acl    = "public-read"
 }
 """,
-            "type": "terraform"
+            "type": "terraform",
         }
     ]
-    
+
     response = client.post("/validate", json={"files": test_files})
     assert response.status_code == 200
     data = response.json()
@@ -46,16 +51,13 @@ resource "aws_s3_bucket" "public_bucket" {
     assert "summary" in data
     assert "errors" in data
 
+
 def test_validate_with_invalid_file():
     """Test validate with invalid file"""
     test_files = [
-        {
-            "path": "test.txt",
-            "content": "not a valid file",
-            "type": "unknown"
-        }
+        {"path": "test.txt", "content": "not a valid file", "type": "unknown"}
     ]
-    
+
     response = client.post("/validate", json={"files": test_files})
     # Should handle gracefully
     assert response.status_code == 200
