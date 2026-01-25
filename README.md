@@ -1,3 +1,63 @@
+
+# SIS – Security Inspection System
+
+> Static analysis for rule engines, policy layers, and business logic configurations.
+
+**SIS** finds security flaws in systems such as:
+
+* OPA / Rego policies
+* AWS IAM, Azure RBAC, GCP IAM
+* Custom RBAC / ABAC decision tables
+* SaaS rule engines and policy configurations
+
+[![GitHub Release](https://img.shields.io/github/v/release/gopinath2866/sis-rules-engine)](https://github.com/gopinath2866/sis-rules-engine/releases)
+
+---
+
+## Install
+
+```bash
+git clone https://github.com/gopinath2866/sis-rules-engine.git
+cd sis-rules-engine
+```
+
+## Scan in 30 Seconds
+
+```bash
+sis scan -rules ./example-rules/ -target ./your-policy-dir/
+```
+
+*Output:* detected violations with severity and file locations.
+
+---
+
+## Why SIS Exists
+
+Rule-based systems are everywhere—but **misconfigured rules** are a frequent cause of
+privilege escalation, data leakage, and compliance failures.
+
+SIS adds a **security lens** to your logic layer before those issues reach production.
+
+---
+
+## Get Started
+
+* Quick Start
+* Writing Custom Rules
+* Example Rule Packs
+* **Free Security Audit** (see below)
+
+## When Not to Use SIS
+
+SIS is intentionally scoped. It may **not** be the right tool if:
+
+* Your rule system changes multiple times per hour and is evaluated dynamically at runtime.
+* You require **real-time intrusion detection or alerting**.
+* You already operate a mature, heavily audited policy-as-code pipeline with equivalent tooling.
+* You expect SIS to detect **application logic bugs** in source code (use static analyzers instead).
+
+SIS is designed for **static, pre-deployment analysis** of rule and policy configurations.
+
 # Static Irreversibility Scanner (SIS) v1.0.0
 
 Deterministic pattern scanner for irreversible infrastructure decisions.
