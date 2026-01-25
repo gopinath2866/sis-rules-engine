@@ -11,6 +11,39 @@ from typing import Any, Dict, List
 from .scanner import SISScanner
 
 
+
+def _print_monetization_info():
+    """Print monetization information"""
+    print("
+" + "="*60)
+    print("🚀 ENTERPRISE FEATURES & SERVICES AVAILABLE")
+    print("="*60)
+    print("
+✨ Premium Features:")
+    print("  • GDPR/HIPAA/PCI-DSS Compliance Rules")
+    print("  • Custom Rule Development")
+    print("  • Priority Support & Training")
+    print("  • Enterprise Deployment")
+    print("
+💰 Pricing:")
+    print("  • Custom Rules: $2,000 - $10,000 per set")
+    print("  • Consulting: $200 - $500 per hour")
+    print("  • Training: $3,000 per day")
+    print("
+🎁 Special Offer:")
+    print("  • First 10 customers: 50% OFF")
+    print("  • Free security audit available")
+    print("
+📞 Contact:")
+    print("  • Email: gopinath@example.com")
+    print("  • Services: https://github.com/gopinath2866/sis-rules-engine/blob/main/SERVICES.md")
+    print("  • Free Audit: https://github.com/gopinath2866/sis-rules-engine/blob/main/FREE_AUDIT.md")
+    print("
+☕ Support Development:")
+    print("  • GitHub Sponsors: https://github.com/sponsors/gopinath2866")
+    print("  • Buy Me a Coffee: https://buymeacoffee.com/gopinath")
+    print("="*60)
+
 def main():
     parser = argparse.ArgumentParser(
         description="SIS Security Scanner - Find security issues in infrastructure code",
@@ -180,6 +213,10 @@ def generate_json(findings: List[Dict[str, Any]], scan_path: str) -> str:
 
     # Use default=str to handle any non-serializable objects
     return json.dumps(result, indent=2, default=str)
+
+        # Display monetization information for free tier
+        if args.subcommand != "validate" and args.subcommand != "scan":
+            _print_monetization_info()
 
 
 def generate_text_report(findings: List[Dict[str, Any]], scan_path: str) -> str:

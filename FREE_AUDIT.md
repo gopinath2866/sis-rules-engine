@@ -92,3 +92,53 @@ or
 ---
 
 *Last updated: 2026-01-25*
+
+## 🚀 From Free Audit to Paid Services
+
+### Our Audit Process:
+1. **Apply** for your free audit (first 10 applicants)
+2. **Receive** comprehensive security report
+3. **Review** findings with our team (free 1-hour consultation)
+4. **Implement** recommendations with our help
+
+### What Happens After Your Free Audit:
+- **Option 1**: Implement fixes yourself (no cost)
+- **Option 2**: Hire us for remediation ($2,000 - $10,000)
+- **Option 3**: Ongoing monitoring & support (starting at $500/month)
+
+### Convert Audit Findings into Revenue:
+Many clients discover critical issues that require:
+- **Custom rules** to prevent recurrence ($2,000+)
+- **Training** for their team ($3,000/day)
+- **Integration** into their CI/CD ($5,000+)
+
+---
+
+## 💼 Professional Services Available
+
+### Quick Start Packages:
+
+| Package | Price | Includes |
+|---------|-------|----------|
+| **Audit + Fix** | $5,000 | Free audit + implementation of all fixes |
+| **Compliance Bundle** | $15,000 | Audit + GDPR/HIPAA rules + training |
+| **Enterprise Suite** | $25,000 | Everything + 1 year of support |
+
+### Ready to Secure Your Infrastructure?
+Email us at **gopinath@example.com** with:
+- Subject: "SIS Audit Request"
+- Number of IaC files
+- Primary cloud provider
+- Compliance requirements (if any)
+
+---
+
+## 📈 Success Stories
+
+*"After our free audit, we discovered 15 critical security misconfigurations. The SIS team helped us fix them all and implemented custom rules to prevent recurrence. Worth every penny!"* - CTO, SaaS Startup
+
+*"The audit revealed compliance gaps we didn't know existed. Their custom HIPAA rule set saved us months of work."* - Security Lead, Healthcare Company
+
+---
+
+**Note**: Free audits are limited to 10 organizations. After that, audit services start at $2,500.

@@ -125,3 +125,54 @@ docker-compose up --build
 ✅ **Docker Ready** - Containerized deployment  
 ✅ **Multi-Python Support** - Tested on Python 3.9-3.12  
 ✅ **Production Ready** - Type checking, formatting, and quality gates
+## 💰 Support & Monetization
+
+### ✨ **Free Community Edition**
+- Basic validation rules
+- Community support via GitHub Issues
+- MIT Licensed - Free forever
+
+### 🚀 **Professional Services**
+We offer custom development, training, and consulting:
+- **Custom Rule Development**: $2,000 - $10,000 per rule set
+- **Integration Services**: $5,000 - $25,000
+- **Training & Workshops**: $3,000 per day
+- **Compliance Audits**: Starting at $5,000
+
+👉 [View Services & Pricing](SERVICES.md)
+
+### ☕ **Support Development**
+If SIS Rules Engine helps secure your infrastructure, consider supporting its development:
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/gopinath2866?style=for-the-badge)](https://github.com/sponsors/gopinath2866)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/gopinath)
+
+### 🔐 **Free Security Audit**
+We're offering **10 free security audits** for early adopters:
+👉 [Read more & apply here](FREE_AUDIT.md)
+
+## 💰 Support & Monetization
+
+### ✨ **Free Community Edition**
+- Basic validation rules
+- Community support via GitHub Issues
+- MIT Licensed - Free forever
+
+### 🚀 **Professional Services**
+We offer custom development, training, and consulting:
+- **Custom Rule Development**: $2,000 - $10,000 per rule set
+- **Integration Services**: $5,000 - $25,000
+- **Training & Workshops**: $3,000 per day
+- **Compliance Audits**: Starting at $5,000
+
+👉 [View Services & Pricing](SERVICES.md)
+
+### ☕ **Support Development**
+If SIS Rules Engine helps secure your infrastructure, consider supporting its development:
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/gopinath2866?style=for-the-badge)](https://github.com/sponsors/gopinath2866)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/gopinath)
+
+### 🔐 **Free Security Audit**
+We're offering **10 free security audits** for early adopters:
+👉 [Read more & apply here](FREE_AUDIT.md)
