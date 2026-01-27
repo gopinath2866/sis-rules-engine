@@ -10,6 +10,9 @@ from typing import Any, Dict, List
 
 from .scanner import SISScanner
 from .rules.loader import load_rules
+# Fail-fast guard: ensure only authoritative loader is used
+assert load_rules.__module__ == "sis.rules.loader", \
+    "Invalid rule loader imported — only sis.rules.loader is allowed"
 
 
 def _print_monetization_info():
