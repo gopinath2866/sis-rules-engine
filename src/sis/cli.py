@@ -42,7 +42,7 @@ def run_scan(args):
     if hasattr(args, 'packs') and args.packs:
         rules = load_rules(args.packs)
     else:
-        rules = load_rules(args.type)
+        rules = load_rules(args.packs if args.packs else ["canonical"])
     
     if not rules:
         print("❌ No rules found to scan with")
@@ -104,7 +104,7 @@ def list_rules(args):
     if hasattr(args, 'packs') and args.packs:
         rules = load_rules(args.packs)
     else:
-        rules = load_rules(args.type)
+        rules = load_rules(args.packs if args.packs else ["canonical"])
     
     if not rules:
         print(f"No rules found")

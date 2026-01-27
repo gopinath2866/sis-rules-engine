@@ -60,7 +60,7 @@ class SISScanner:
                 normalized_resources.append(normalized)
 
             # Load rules for this file type
-            all_rules = self.rules if self.rules is not None else load_rules()
+            all_rules = self.rules if self.rules is not None else load_rules(["canonical"])
             file_rules = [
                 r for r in all_rules if self._rule_applies_to_file(r, file_type)
             ]

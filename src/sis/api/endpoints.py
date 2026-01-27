@@ -58,10 +58,13 @@ async def validate_files(request: ScanRequest, http_request: Request) -> ScanRes
 
 @app.get("/rules")
 async def get_rules() -> dict:
-    from ..main import load_rules
+    from ..rules.loader import load_rules
+# Fail-fast guard: ensure only authoritative loader is used
+assert load_rules.__module__ == "sis.rules.loader", \
+    "Invalid rule loader imported — only sis.rules.loader is allowed"
 
     try:
-        rules = load_rules()
+        rules = load_rules(["canonical"])
         return {"rules": rules}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load rules: {str(e)}")
