@@ -1,14 +1,4 @@
-"""Rule pack loader for SIS validation engine"""
-
-from .loader import load_rules, get_pack_loader, list_available_packs
-
-__all__ = [
-    "load_rules",
-    "get_pack_loader",
-    "list_available_packs",
-]
-__all__ = [
-    "load_rules",
-    "get_pack_loader",
-    "list_available_packs",
-]
+"""
+SIS Rules Package - All rules are loaded from JSON packs via sis.rules.loader
+"""
+# NO RULES HERE - All rules must come from JSON pack files

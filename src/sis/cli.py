@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from .scanner import SISScanner
-from .rules import load_rules
+from .rules.loader import load_rules
 
 
 def _print_monetization_info():

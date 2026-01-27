@@ -1,0 +1,610 @@
+[
+  {
+    "rule_id": "IRR-IDENT-01",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "google_service_account"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "account_id",
+          "operator": "REGEX",
+          "value": ".*@.*\\.iam\\.gserviceaccount\\.com"
+        }
+      ]
+    },
+    "message": "Service account bound at project or organization scope."
+  },
+  {
+    "rule_id": "IRR-IDENT-02",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "google_service_account_key",
+        "aws_iam_access_key"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "id",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "User-managed service account key creates irreversible credential surface."
+  },
+  {
+    "rule_id": "IRR-IDENT-03",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "kubernetes"
+      ],
+      "resource_kinds": [
+        "ServiceAccount"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "automountServiceAccountToken",
+          "operator": "EQUALS",
+          "value": true
+        },
+        {
+          "path": "metadata.namespace",
+          "operator": "EQUALS",
+          "value": "kube-system"
+        }
+      ]
+    },
+    "message": "Service account token mounted in system namespace."
+  },
+  {
+    "rule_id": "IRR-IDENT-04",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "aws_iam_role"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "assume_role_policy",
+          "operator": "EXISTS"
+        },
+        {
+          "path": "managed_policy_arns",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "Custom IAM role bound to active principals."
+  },
+  {
+    "rule_id": "IRR-IDENT-05",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "kubernetes"
+      ],
+      "resource_kinds": [
+        "ServiceAccount"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "metadata.annotations",
+          "operator": "CONTAINS",
+          "value": "iam.gke.io/gcp-service-account"
+        }
+      ]
+    },
+    "message": "Workload identity bound to external cloud identity."
+  },
+  {
+    "rule_id": "IRR-IDENT-06",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "aws_lambda_function",
+        "google_cloudfunctions_function"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "service_account_email",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "Runtime explicitly bound to service account."
+  },
+  {
+    "rule_id": "IRR-IDENT-07",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "aws_instance",
+        "google_compute_instance"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "service_account",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "VM launched with fixed service account."
+  },
+  {
+    "rule_id": "IRR-IDENT-08",
+    "rule_type": "IRREVERSIBLE_IDENTITY_BINDING",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "google_project_iam_member"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "project",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "IAM binding introduces cross-project identity dependency."
+  },
+  {
+    "rule_id": "IRR-DEC-01",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "*"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "deletion_protection",
+          "operator": "EQUALS",
+          "value": true
+        }
+      ]
+    },
+    "message": "Resource has deletion protection enabled."
+  },
+  {
+    "rule_id": "IRR-DEC-02",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "*"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "lifecycle.prevent_destroy",
+          "operator": "EQUALS",
+          "value": true
+        }
+      ]
+    },
+    "message": "Resource cannot be destroyed via IaC."
+  },
+  {
+    "rule_id": "IRR-DEC-03",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_s3_bucket",
+        "google_storage_bucket"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "retention_policy.is_locked",
+          "operator": "EQUALS",
+          "value": true
+        }
+      ]
+    },
+    "message": "Storage bucket with locked retention policy."
+  },
+  {
+    "rule_id": "IRR-DEC-04",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_s3_bucket_lifecycle_configuration",
+        "google_storage_bucket"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "retention_policy.retention_period",
+          "operator": "REGEX",
+          "value": "^[0-9]{8,}$"
+        }
+      ]
+    },
+    "message": "Retention policy set to extreme duration."
+  },
+  {
+    "rule_id": "IRR-DEC-05",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_kms_key",
+        "google_kms_crypto_key"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "rotation_period",
+          "operator": "EQUALS",
+          "value": "0s"
+        }
+      ]
+    },
+    "message": "Cryptographic key rotation disabled."
+  },
+  {
+    "rule_id": "IRR-DEC-06",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_reserved_instances",
+        "google_compute_commitment"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "term",
+          "operator": "REGEX",
+          "value": "(1|3) year"
+        }
+      ]
+    },
+    "message": "Long-term resource commitment created."
+  },
+  {
+    "rule_id": "IRR-DEC-07",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_route53_record",
+        "google_dns_record_set"
+      ]
+    },
+    "detection": {
+      "match_logic": "ANY",
+      "conditions": [
+        {
+          "path": "ttl",
+          "operator": "EQUALS",
+          "value": "0"
+        },
+        {
+          "path": "ttl",
+          "operator": "REGEX",
+          "value": "^[0-9]{8,}$"
+        }
+      ]
+    },
+    "message": "DNS record TTL creates propagation irreversibility."
+  },
+  {
+    "rule_id": "IRR-DEC-08",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_autoscaling_group",
+        "google_compute_autoscaler"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "min_size",
+          "operator": "GREATER_THAN",
+          "value": "0"
+        }
+      ]
+    },
+    "message": "Autoscaling floor enforces minimum existence."
+  },
+  {
+    "rule_id": "IRR-DEC-09",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "aws_cloudtrail"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "enable_log_file_validation",
+          "operator": "EQUALS",
+          "value": true
+        }
+      ]
+    },
+    "message": "Audit trail immutability enforced."
+  },
+  {
+    "rule_id": "IRR-DEC-10",
+    "rule_type": "IRREVERSIBLE_DECISION",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_s3_bucket_versioning",
+        "google_storage_bucket"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "versioning.enabled",
+          "operator": "EQUALS",
+          "value": true
+        }
+      ]
+    },
+    "message": "Object versioning enabled without disable path."
+  },
+  {
+    "rule_id": "ADMIN-01",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "kubernetes"
+      ],
+      "resource_kinds": [
+        "ClusterRoleBinding"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "metadata.name",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "ClusterRoleBinding requires cluster-admin to reverse."
+  },
+  {
+    "rule_id": "ADMIN-02",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_iam_policy",
+        "google_project_iam_policy"
+      ]
+    },
+    "detection": {
+      "match_logic": "ANY",
+      "conditions": [
+        {
+          "path": "policy",
+          "operator": "CONTAINS",
+          "value": "\"Action\": \"*\""
+        },
+        {
+          "path": "policy",
+          "operator": "CONTAINS",
+          "value": "\"Effect\": \"Allow\""
+        }
+      ]
+    },
+    "message": "IAM policy requires administrative authority to revoke."
+  },
+  {
+    "rule_id": "ADMIN-03",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "kubernetes"
+      ],
+      "resource_kinds": [
+        "*"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "metadata.namespace",
+          "operator": "EQUALS",
+          "value": "kube-system"
+        }
+      ]
+    },
+    "message": "System namespace resource requires elevated authority."
+  },
+  {
+    "rule_id": "ADMIN-04",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "google_organization_iam_policy",
+        "google_folder_iam_policy"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "org_id",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "Organization-level IAM policy modification requires admin."
+  },
+  {
+    "rule_id": "ADMIN-05",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "terraform",
+        "cloudformation"
+      ],
+      "resource_kinds": [
+        "aws_vpc",
+        "google_compute_network"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "routing_mode",
+          "operator": "EQUALS",
+          "value": "GLOBAL"
+        }
+      ]
+    },
+    "message": "Network routing configuration requires administrative override."
+  },
+  {
+    "rule_id": "ADMIN-06",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "aws_backup_vault_lock_configuration"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "min_retention_days",
+          "operator": "EXISTS"
+        }
+      ]
+    },
+    "message": "Backup vault retention lock cannot be locally reversed."
+  },
+  {
+    "rule_id": "ADMIN-07",
+    "rule_type": "ADMIN_OVERRIDE_DEPENDENCY",
+    "applies_to": {
+      "file_types": [
+        "terraform"
+      ],
+      "resource_kinds": [
+        "aws_organizations_policy"
+      ]
+    },
+    "detection": {
+      "match_logic": "ALL",
+      "conditions": [
+        {
+          "path": "type",
+          "operator": "EQUALS",
+          "value": "SERVICE_CONTROL_POLICY"
+        }
+      ]
+    },
+    "message": "Organization-wide deny policy requires root authority."
+  }
+]
