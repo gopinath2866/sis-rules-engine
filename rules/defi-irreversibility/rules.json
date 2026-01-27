@@ -1,0 +1,35 @@
+[
+  {
+    "id": "defi-irreversibility-01",
+    "title": "Irreversible Token Transfer",
+    "description": "Token transfer functions without pause mechanism or reversible transactions",
+    "severity": "HIGH",
+    "category": "DeFi Irreversibility",
+    "provider": "ethereum",
+    "resource": "smart_contract",
+    "condition": "transfer_function.irreversible == true && transfer_function.pausable == false",
+    "remediation": "Implement pausable transfers or reversible transaction mechanisms"
+  },
+  {
+    "id": "defi-irreversibility-02",
+    "title": "Irreversible Governance Decision",
+    "description": "Governance decisions cannot be reversed or amended",
+    "severity": "HIGH",
+    "category": "DeFi Irreversibility",
+    "provider": "ethereum",
+    "resource": "governance_contract",
+    "condition": "governance.reversible == false && governance.timelock == false",
+    "remediation": "Implement timelocks and governance mechanisms that allow reversal"
+  },
+  {
+    "id": "defi-irreversibility-03",
+    "title": "Irreversible Upgrade",
+    "description": "Contract upgrades are irreversible and cannot be rolled back",
+    "severity": "CRITICAL",
+    "category": "DeFi Irreversibility",
+    "provider": "ethereum",
+    "resource": "smart_contract",
+    "condition": "upgradeable == true && rollback_possible == false",
+    "remediation": "Implement upgrade mechanisms with rollback capabilities"
+  }
+]

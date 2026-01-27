@@ -1,0 +1,8 @@
+{
+    "name": "defi-irreversibility",
+    "version": "1.0.0",
+    "description": "DeFi irreversibility risks in smart contracts",
+    "author": "SIS",
+    "license": "MIT",
+    "type": "free"
+}

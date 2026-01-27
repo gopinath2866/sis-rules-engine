@@ -1,0 +1,9 @@
+{
+    "name": "defi-safety",
+    "version": "1.0.0",
+    "description": "DeFi safety and security rules for smart contracts and protocols",
+    "author": "SIS",
+    "license": "MIT",
+    "type": "free",
+    "tags": ["defi", "ethereum", "smart-contract", "security"]
+}

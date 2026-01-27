@@ -1,0 +1,68 @@
+[
+  {
+    "id": "defi-unverified-contract",
+    "title": "Unverified Smart Contract",
+    "description": "Smart contract source code is not verified on the blockchain explorer",
+    "severity": "HIGH",
+    "category": "DeFi Safety",
+    "provider": "ethereum",
+    "resource": "smart_contract",
+    "condition": "verified == false",
+    "remediation": "Only interact with verified contracts"
+  },
+  {
+    "id": "defi-owner-privileges",
+    "title": "Excessive Owner Privileges",
+    "description": "Contract owner has excessive privileges (mint, pause, upgrade without timelock)",
+    "severity": "CRITICAL",
+    "category": "DeFi Safety",
+    "provider": "ethereum",
+    "resource": "smart_contract",
+    "condition": "owner_privileges.mintable == true || owner_privileges.pausable == true || (owner_privileges.upgradable == true && owner_privileges.timelock == false)",
+    "remediation": "Implement timelocks and minimize owner privileges"
+  },
+  {
+    "id": "defi-centralization-risk",
+    "title": "Centralization Risk",
+    "description": "Protocol has single points of failure or centralized control",
+    "severity": "HIGH",
+    "category": "DeFi Safety",
+    "provider": "ethereum",
+    "resource": "defi_protocol",
+    "condition": "multisig == false || admin_keys > 1 || timelock == false",
+    "remediation": "Implement multisig, timelocks, and decentralized governance"
+  },
+  {
+    "id": "defi-liquidity-lock",
+    "title": "Liquidity Not Locked",
+    "description": "Liquidity pool tokens are not locked in a timelock contract",
+    "severity": "HIGH",
+    "category": "DeFi Safety",
+    "provider": "ethereum",
+    "resource": "liquidity_pool",
+    "condition": "liquidity_locked == false || lock_duration < 90",
+    "remediation": "Lock liquidity for at least 90 days in a timelock contract"
+  },
+  {
+    "id": "defi-audit-missing",
+    "title": "Missing Security Audit",
+    "description": "Smart contract has not been audited by a reputable security firm",
+    "severity": "MEDIUM",
+    "category": "DeFi Safety",
+    "provider": "ethereum",
+    "resource": "smart_contract",
+    "condition": "audits.length == 0 || audits[0].reputable == false",
+    "remediation": "Get a security audit from a reputable firm before launch"
+  },
+  {
+    "id": "defi-rugpull-risk",
+    "title": "Rug Pull Risk Indicators",
+    "description": "Multiple rug pull risk indicators present (high owner allocation, no locks, etc.)",
+    "severity": "CRITICAL",
+    "category": "DeFi Safety",
+    "provider": "ethereum",
+    "resource": "token",
+    "condition": "owner_allocation > 0.2 || liquidity_percent < 0.5 || mintable == true",
+    "remediation": "Ensure fair token distribution and locked liquidity"
+  }
+]
