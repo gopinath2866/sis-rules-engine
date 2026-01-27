@@ -134,6 +134,8 @@ def check_resource_rule(
             "message": rule.get("message", "Rule violation"),
             "location": {"line": resource.get("line", 0)},
             "remediation": rule.get("remediation", ""),
+                "_pack": rule.get("_pack", "N/A"),
+                "_pack_version": rule.get("_pack_version", "N/A"),
         }
 
     return None

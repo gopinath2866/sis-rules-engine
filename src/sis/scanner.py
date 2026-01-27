@@ -13,7 +13,9 @@ from .rules import load_rules
 
 
 class SISScanner:
-    def __init__(self):
+    def __init__(self, quiet=False, rules=None):
+        self.quiet = quiet
+        self.rules = rules
         self.parsers = {
             ".tf": "terraform",
             ".yaml": "kubernetes",
@@ -42,11 +44,11 @@ class SISScanner:
             with open(file_path, "r") as f:
                 content = f.read()
 
-            print(f"🔍 Scanning {file_path} as {file_type}")
+            if not self.quiet: print(f"🔍 Scanning {file_path} as {file_type}")
 
             # Parse resources from file
             resources = parse_content(content, file_type)
-            print(f"   Parsed {len(resources)} resources")
+            if not self.quiet: print(f"   Parsed {len(resources)} resources")
 
             # Normalize resource format for engine
             normalized_resources = []
@@ -58,15 +60,15 @@ class SISScanner:
                 normalized_resources.append(normalized)
 
             # Load rules for this file type
-            all_rules = load_rules()
+            all_rules = self.rules if self.rules is not None else load_rules()
             file_rules = [
                 r for r in all_rules if self._rule_applies_to_file(r, file_type)
             ]
-            print(f"   Using {len(file_rules)} rules for {file_type}")
+            if not self.quiet: print(f"   Using {len(file_rules)} rules for {file_type}")
 
             # Validate resources against rules
             violations = validate_resources(normalized_resources, file_rules)
-            print(f"   Found {len(violations)} violations")
+            if not self.quiet: print(f"   Found {len(violations)} violations")
 
             # Convert violations to findings format
             findings = []
@@ -80,7 +82,7 @@ class SISScanner:
                     "resource_type": violation.get("resource_type", "unknown"),
                     "line": violation.get("location", {}).get("line", 0),
                     "remediation": violation.get("remediation", ""),
-                }
+                    "_pack": violation.get("_pack", "N/A"),                    "_pack_version": violation.get("_pack_version", "N/A"),                }
                 findings.append(finding)
 
             return findings
@@ -152,3 +154,6 @@ class SISScanner:
             return True
 
         return False
+
+# Alias for backward compatibility
+Scanner = SISScanner

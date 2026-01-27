@@ -68,3 +68,8 @@ service_packages.py
 *.key
 *.pem
 *.cert
+*.backup
+*.bak
+*.tf
+rules_backup/
+__pycache__/
