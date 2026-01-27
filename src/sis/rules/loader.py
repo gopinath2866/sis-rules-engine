@@ -1,7 +1,11 @@
 """
-SIS Rule Loader - Single authoritative source for all rules.
-All rules must come from JSON pack files. No Python hardcoded rules.
+SIS Rule Loader
+
+Single authoritative source for loading rules.
+All rules MUST come from JSON rule packs.
+No Python-defined rules. No alternate loaders.
 """
+
 import json
 import logging
 from pathlib import Path
@@ -9,84 +13,126 @@ from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
-# Explicit base paths in order of priority
-# PROJECT FIRST during development, user-installed second
-RULES_PATHS = [
-    Path(__file__).resolve().parents[3] / "rules",  # Project packs (development)
-    Path.home() / ".sis" / "rules",  # User-installed packs (production)
+# Rule pack search paths (ordered)
+# 1. Project-local packs (development)
+# 2. User-installed packs (production)
+RULES_BASE_PATHS: List[Path] = [
+    Path(__file__).resolve().parents[3] / "rules",
+    Path.home() / ".sis" / "rules",
 ]
 
-def load_rules(pack_names: List[str] = None) -> List[Dict[str, Any]]:
+
+class RuleLoadError(Exception):
+    """Raised when rule loading fails."""
+
+
+def load_rules(packs: Optional[List[str]] = None) -> List[Dict[str, Any]]:
     """
-    Load rules from specified packs. If no packs specified, load all available.
-    
+    Load rules from JSON rule packs.
+
     Args:
-        pack_names: List of pack names to load. If None, loads all packs.
-    
+        packs: List of pack names to load.
+               If None, all discovered packs are loaded.
+
     Returns:
-        List of rule dictionaries.
-    
+        Flat list of rule dictionaries.
+
     Raises:
-        ValueError: If a pack is malformed or missing.
-        FileNotFoundError: If a requested pack doesn't exist.
+        RuleLoadError: On malformed packs or invalid rules.
     """
-    if pack_names is None:
-        # Discover all available packs
-        pack_names = []
-        for base_path in RULES_PATHS:
-            if base_path.exists():
-                pack_names.extend([p.name for p in base_path.iterdir() if p.is_dir()])
-        pack_names = list(set(pack_names))  # Remove duplicates
-    
-    rules = []
-    loaded_packs = []
-    
-    for pack_name in pack_names:
-        try:
-            pack_rules = _load_pack(pack_name)
-            if pack_rules:
-                rules.extend(pack_rules)
-                loaded_packs.append(pack_name)
-        except (FileNotFoundError, ValueError) as e:
-            logger.warning(f"Could not load pack '{pack_name}': {e}")
-    
-    logger.info(f"Loaded {len(rules)} rules from packs: {', '.join(loaded_packs)}")
-    return rules
+    pack_names = packs if packs is not None else _discover_packs()
+
+    if not pack_names:
+        raise RuleLoadError("No rule packs found")
+
+    all_rules: List[Dict[str, Any]] = []
+
+    for pack in pack_names:
+        rules = _load_pack(pack)
+        all_rules.extend(rules)
+
+    logger.info(
+        "Loaded %d rules from packs: %s",
+        len(all_rules),
+        ", ".join(pack_names),
+    )
+
+    return all_rules
+
+
+def _discover_packs() -> List[str]:
+    """Discover all available rule packs."""
+    packs = set()
+
+    for base in RULES_BASE_PATHS:
+        if not base.exists():
+            continue
+        for path in base.iterdir():
+            if path.is_dir() and (path / "rules.json").is_file():
+                packs.add(path.name)
+
+    return sorted(packs)
+
 
 def _load_pack(pack_name: str) -> List[Dict[str, Any]]:
-    """Load a single pack's rules."""
-    for base_path in RULES_PATHS:
-        rules_file = base_path / pack_name / "rules.json"
-        if rules_file.exists():
-            try:
-                with open(rules_file, 'r') as f:
-                    rules_data = json.load(f)
-                
-                # VALIDATION: Fail loud on malformed packs
-                if not isinstance(rules_data, list):
-                    raise ValueError(f"Invalid rules format in {rules_file}: must be a list")
-                
-                # Add pack attribution to each rule
-                for rule in rules_data:
-                    rule['_pack'] = pack_name
-                    # Ensure rule has standard id field
-                    if 'rule_id' in rule and 'id' not in rule:
-                        rule['id'] = rule['rule_id']
-                
-                logger.debug(f"Loaded {len(rules_data)} rules from pack '{pack_name}'")
-                return rules_data
-                
-            except json.JSONDecodeError as e:
-                raise ValueError(f"Invalid JSON in {rules_file}: {e}")
-            except Exception as e:
-                raise ValueError(f"Failed to load pack '{pack_name}' from {rules_file}: {e}")
-    
-    raise FileNotFoundError(f"Pack '{pack_name}' not found in any rule path")
+    """Load a single rule pack."""
+    rules_file = _find_pack_rules_file(pack_name)
+
+    try:
+        with rules_file.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        raise RuleLoadError(f"Invalid JSON in {rules_file}: {e}") from e
+
+    if not isinstance(data, list):
+        raise RuleLoadError(
+            f"{rules_file} must contain a list of rules"
+        )
+
+    rules: List[Dict[str, Any]] = []
+
+    for idx, rule in enumerate(data):
+        if not isinstance(rule, dict):
+            raise RuleLoadError(
+                f"Rule #{idx} in {rules_file} is not an object"
+            )
+
+        normalized = _normalize_rule(rule, pack_name, rules_file)
+        rules.append(normalized)
+
+    return rules
+
+
+def _find_pack_rules_file(pack_name: str) -> Path:
+    """Locate rules.json for a given pack."""
+    for base in RULES_BASE_PATHS:
+        candidate = base / pack_name / "rules.json"
+        if candidate.is_file():
+            return candidate
+
+    raise RuleLoadError(f"Rule pack '{pack_name}' not found")
+
+
+def _normalize_rule(
+    rule: Dict[str, Any],
+    pack_name: str,
+    source: Path,
+) -> Dict[str, Any]:
+    """Validate and normalize a rule definition."""
+    rule_id = rule.get("id") or rule.get("rule_id")
+    if not rule_id or not isinstance(rule_id, str):
+        raise RuleLoadError(
+            f"Rule in {source} missing valid 'id'"
+        )
+
+    normalized = dict(rule)  # shallow copy
+    normalized["id"] = rule_id
+    normalized["_pack"] = pack_name
+    normalized["_source"] = str(source)
+
+    return normalized
+
 
 def list_available_packs() -> List[str]:
-    """List all available packs across all rule paths."""
-    packs = set()
-    for base_path in RULES_PATHS:
-        if base_path.exists():
-            packs.update([p.name for p in base_path.iterdir() if p.is_dir()])
-    return sorted(packs)
+    """Public helper to list available rule packs."""
+    return _discover_packs()
