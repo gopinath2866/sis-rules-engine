@@ -1,0 +1,8 @@
+{
+    "name": "canonical",
+    "version": "1.0.0",
+    "description": "Canonical security rules for Terraform/IaC",
+    "author": "SIS",
+    "license": "MIT",
+    "type": "free"
+}

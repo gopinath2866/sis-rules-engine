@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 
 from .engine import validate_resources
 from .parsers import parse_content
-from .rules import load_rules
+from .rules.loader import load_rules
 
 
 class SISScanner:
