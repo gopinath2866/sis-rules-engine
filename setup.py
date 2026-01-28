@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="sis-security-scanner",
-    version="1.0.0",
+    version="1.1.0",
     author="SIS Security",
     author_email="contact@sis-security.com",
     description="Security scanner for infrastructure-as-code (Terraform, Kubernetes, Docker, CloudFormation)",

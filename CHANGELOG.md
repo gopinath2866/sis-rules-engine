@@ -21,3 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 * No known critical vulnerabilities in the scanner itself at release time.
 * Static analysis only; no execution or mutation of target systems.
+
+## [1.1.0] - 2026-01-28
+
+### Fixed
+- Array existential semantics for security rules (critical false-negative fix)
+- Nested array path resolution
+- Empty array handling
+
+### Added
+- Formal array semantics documentation
+- Semantic stability guarantees
+- Critical regression tests
