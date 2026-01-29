@@ -29,3 +29,4 @@ contract VulnerableProxy {
     }
 }
 // Additional comment to trigger CI
+// CI validation commit
