@@ -1,0 +1,22 @@
+name: Test CI Triggers
+
+on:
+  pull_request:
+    paths:
+      - 'contracts/**'
+      - 'upgrade/**'
+      - 'scripts/upgrade*'
+
+jobs:
+  test-triggers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check triggered paths
+        run: |
+          echo "✅ Workflow triggered for paths:"
+          echo "  - contracts/**"
+          echo "  - upgrade/**"
+          echo "  - scripts/upgrade*"
+          echo ""
+          echo "Current changed files:"
+          git diff --name-only HEAD^ HEAD || echo "Cannot diff, but workflow was triggered"
