@@ -1,0 +1,11 @@
+File/Dir	Type	Revenue Impact
+__init__.py	Core	None
+api	Dead / Legacy	None
+auth.py	Support / Optional	Indirect
+cli.py	CLI	Direct
+engine.py	Core Engine	Indirect
+main.py	Dead / Legacy	None
+license.py	Support	Indirect
+parsers	Core / Parser	Direct
+rules	Core / Rules	Direct
+scanner.py	Orchestrator / Product	Direct
