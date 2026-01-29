@@ -1,0 +1,9 @@
+{
+  "name": "premium",
+  "version": "1.0.0",
+  "description": "Premium security and compliance rules",
+  "author": "SIS Security",
+  "license": "Commercial",
+  "tags": ["security", "compliance", "premium"],
+  "features": ["advanced-security", "compliance-checks", "enterprise-rules"]
+}

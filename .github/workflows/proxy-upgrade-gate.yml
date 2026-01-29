@@ -1,0 +1,51 @@
+name: Proxy Upgrade Gate
+
+on:
+  pull_request:
+    paths:
+      - 'contracts/**'
+      - 'upgrade/**'
+      - 'scripts/upgrade*'
+
+jobs:
+  sis-proxy-upgrade-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SIS
+        run: |
+          pip install -e ./sis-core
+
+      - name: Run SIS Proxy Upgrade Gate
+        id: sis
+        continue-on-error: true
+        run: |
+          sis scan \
+            --gate proxy-upgrade \
+            --format json \
+            --output sis-proxy-upgrade-report.json
+
+      - name: Parse and display results
+        run: |
+          if [ -f sis-proxy-upgrade-report.json ]; then
+            python .github/scripts/parse-sis-results.py
+          fi
+
+      - name: Upload SIS report artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sis-proxy-upgrade-report
+          path: sis-proxy-upgrade-report.json
+          retention-days: 90
