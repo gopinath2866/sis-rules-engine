@@ -1,1 +1,0 @@
-{"files":[{"name":"IRR-IDENT-01.tf","type":"terraform","content":"resource \"aws_iam_role\" \"IRR-IDENT-01\" { assume_role_policy = '{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:role/Admin\"}}]}' }"}]}

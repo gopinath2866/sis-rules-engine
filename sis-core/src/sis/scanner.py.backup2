@@ -1,0 +1,304 @@
+"""
+SIS Unified Scanner - Fixed version
+"""
+
+import json
+import os
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from .engine import validate_resources
+from .parsers import parse_content
+
+
+class SISScanner:
+    def __init__(self, quiet=False, rules=None, premium_rule_pack=None):
+        self.quiet = quiet
+        self.rules = rules if rules is not None else []
+        self.premium_rule_pack = premium_rule_pack
+        self.parsers = {
+            ".tf": "terraform",
+            ".yaml": "kubernetes",
+            ".yml": "kubernetes",
+            "docker-compose.yml": "docker_compose",
+            "docker-compose.yaml": "docker_compose",
+            ".json": "cloudformation",
+        }
+        
+        # Load rules if not provided
+        if not self.rules:
+            self._load_rules()
+
+    def _load_rules(self):
+        """Load rules from standard locations"""
+        try:
+            self.rules = []
+            
+            # Load all rule packs from the current directory's rules folder
+            current_dir = Path.cwd()
+            rules_dir = current_dir / "rules"
+            
+            if rules_dir.exists() and rules_dir.is_dir():
+                if not self.quiet:
+                    print(f"📁 Looking for rules in: {rules_dir}")
+                
+                for item in rules_dir.iterdir():
+                    if item.is_dir():
+                        rules_file = item / "rules.json"
+                        if rules_file.exists():
+                            try:
+                                with open(rules_file, 'r') as f:
+                                    pack_rules = json.load(f)
+                                    if isinstance(pack_rules, list):
+                                        self.rules.extend(pack_rules)
+                                    else:
+                                        self.rules.append(pack_rules)
+                                if not self.quiet:
+                                    print(f"   Loaded rules from {item.name}")
+                            except Exception as e:
+                                if not self.quiet:
+                                    print(f"⚠️  Error loading rules from {item.name}: {e}")
+                    elif item.is_file() and item.name.endswith('.json'):
+                        # Also load standalone JSON rule files
+                        try:
+                            with open(item, 'r') as f:
+                                file_rules = json.load(f)
+                                if isinstance(file_rules, list):
+                                    self.rules.extend(file_rules)
+                                else:
+                                    self.rules.append(file_rules)
+                            if not self.quiet:
+                                print(f"   Loaded rules from {item.name}")
+                        except Exception as e:
+                            if not self.quiet:
+                                print(f"⚠️  Error loading rules from {item.name}: {e}")
+            
+            # Load premium rules if provided
+            if self.premium_rule_pack and os.path.exists(self.premium_rule_pack):
+                try:
+                    import tempfile
+                    import tarfile
+                    
+                    if not self.quiet:
+                        print(f"📦 Loading premium rules from {self.premium_rule_pack}")
+                    
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        with tarfile.open(self.premium_rule_pack, 'r:gz') as tar:
+                            tar.extractall(tmpdir)
+                        
+                        # Look for rules.json in the extracted files
+                        for root, dirs, files in os.walk(tmpdir):
+                            if 'rules.json' in files:
+                                rules_path = os.path.join(root, 'rules.json')
+                                with open(rules_path, 'r') as f:
+                                    premium_rules = json.load(f)
+                                    if isinstance(premium_rules, list):
+                                        self.rules.extend(premium_rules)
+                                    else:
+                                        self.rules.append(premium_rules)
+                                if not self.quiet:
+                                    print(f"   Loaded premium rules from {self.premium_rule_pack}")
+                                break
+                except Exception as e:
+                    if not self.quiet:
+                        print(f"⚠️  Error loading premium rules: {e}")
+                            
+            if not self.quiet:
+                print(f"📚 Loaded {len(self.rules)} total rules")
+                
+        except Exception as e:
+            if not self.quiet:
+                print(f"⚠️  Error loading rules: {e}")
+
+    def scan_file(self, file_path: str) -> List[Dict[str, Any]]:
+        """Scan a single file and return findings"""
+        path = Path(file_path)
+
+        if not path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        # Determine parser based on file extension/name
+        file_type = self._get_file_type(str(path))
+
+        if not file_type:
+            if not self.quiet:
+                print(f"⚠️  Unsupported file type: {file_path}")
+            return []
+
+        try:
+            # Read file content
+            with open(file_path, "r") as f:
+                content = f.read()
+
+            if not self.quiet:
+                print(f"🔍 Scanning {file_path} as {file_type}")
+
+            # Parse resources from file
+            resources = parse_content(content, file_type)
+            
+            if not self.quiet:
+                print(f"   Found {len(resources)} resources")
+
+            # Validate resources against rules
+            violations = []
+            for rule in self.rules:
+                # Convert single rule to list for validate_resources
+                rule_violations = validate_resources(
+                    resources=resources,
+                    rules=[rule]  # Pass as list, without file_path
+                )
+                # Add file path to each violation
+                for violation in rule_violations:
+                    violation['file_path'] = str(file_path)
+                violations.extend(rule_violations)
+
+            return violations
+
+        except Exception as e:
+            if not self.quiet:
+                print(f"❌ Error scanning {file_path}: {e}")
+            return []
+
+    def scan_directory(self, directory_path: str) -> List[Dict[str, Any]]:
+        """Scan all supported files in a directory"""
+        all_violations = []
+
+        for root, _, files in os.walk(directory_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+
+                # Check if file is supported
+                if self._get_file_type(file_path):
+                    try:
+                        violations = self.scan_file(file_path)
+                        all_violations.extend(violations)
+                    except Exception as e:
+                        if not self.quiet:
+                            print(f"⚠️  Failed to scan {file_path}: {e}")
+
+        return all_violations
+
+    def _get_file_type(self, file_path: str) -> Optional[str]:
+        """Determine file type from path"""
+        path = Path(file_path)
+        name = path.name.lower()
+
+        # Check for specific file names first
+        if 'docker-compose' in name:
+            return 'docker_compose'
+
+        # Check by extension
+        suffix = path.suffix.lower()
+        if suffix in self.parsers:
+            return self.parsers[suffix]
+
+        return None
+
+    def print_violations(self, violations: List[Dict[str, Any]]) -> None:
+        """Print violations in a human-readable format"""
+        if not violations:
+            print("✅ No violations found!")
+            return
+
+        print(f"🚨 Found {len(violations)} violation(s):")
+        print("-" * 80)
+
+        for i, violation in enumerate(violations, 1):
+            print(f"{i}. {violation.get('rule_id', 'unknown')}: {violation.get('message', 'No message')}")
+            print(f"   File: {violation.get('file_path', 'unknown')}")
+            if 'resource_type' in violation:
+                print(f"   Resource: {violation['resource_type']}.{violation.get('resource_name', 'unknown')}")
+            if 'line' in violation:
+                print(f"   Line: {violation['line']}")
+            print()
+
+def scan_gate(self, gate_name, path):
+    if gate_name != 'proxy-upgrade':
+        raise ValueError(f"Unknown gate: {gate_name}")
+    # Only proxy upgrade rules (IDs match your 9 locked rules)
+    proxy_rule_ids = [
+        'STORAGE_COLLISION', 'UUPS_UUID', 'MISSING_AUTH', 'ADMIN_SLOT_DRIFT',
+        'DELEGATECALL_UNTRUSTED', 'INITIALIZER_ABUSE', 'SELFDESTRUCT_PATHS',
+        'SOLIDITY_INCOMPATIBLE', 'UPGRADE_TIMELOCK'
+    ]
+    rules_to_run = [r for r in self.rules if r.get('rule_id') in proxy_rule_ids]
+    # Reuse existing scan_file / scan_directory logic
+    if Path(path).is_file():
+        return self._scan_with_rules(rules_to_run, str(path))
+    else:
+        return self._scan_with_rules(rules_to_run, str(path))
+
+def scan_gate(self, gate_name, path):
+    if gate_name != 'proxy-upgrade':
+        raise ValueError(f"Unknown gate: {gate_name}")
+    proxy_rule_ids = [
+        'STORAGE_COLLISION', 'UUPS_UUID', 'MISSING_AUTH', 'ADMIN_SLOT_DRIFT',
+        'DELEGATECALL_UNTRUSTED', 'INITIALIZER_ABUSE', 'SELFDESTRUCT_PATHS',
+        'SOLIDITY_INCOMPATIBLE', 'UPGRADE_TIMELOCK'
+    ]
+    rules_to_run = [r for r in self.rules if r.get('rule_id') in proxy_rule_ids]
+    if Path(path).is_file():
+        return self._scan_with_rules(rules_to_run, str(path))
+    else:
+        return self._scan_with_rules(rules_to_run, str(path))
+
+def scan_gate(self, gate_name, path):
+    """Scan using only rules from a specific gate"""
+    if gate_name != 'proxy-upgrade':
+        raise ValueError(f"Unknown gate: {gate_name}")
+    
+    # Proxy upgrade rules (9 locked rules)
+    proxy_rule_ids = [
+        'STORAGE_COLLISION', 'UUPS_UUID', 'MISSING_AUTH', 'ADMIN_SLOT_DRIFT',
+        'DELEGATECALL_UNTRUSTED', 'INITIALIZER_ABUSE', 'SELFDESTRUCT_PATHS',
+        'SOLIDITY_INCOMPATIBLE', 'UPGRADE_TIMELOCK'
+    ]
+    
+    # Filter rules to only include proxy upgrade rules
+    rules_to_use = [rule for rule in self.rules if rule.get('rule_id') in proxy_rule_ids]
+    
+    # Temporarily replace self.rules, scan, then restore
+    original_rules = self.rules
+    self.rules = rules_to_use
+    
+    try:
+        if Path(path).is_file():
+            findings = self.scan_file(str(path))
+        else:
+            findings = self.scan_directory(str(path))
+    finally:
+        self.rules = original_rules
+    
+    return findings
+
+    def scan_gate(self, gate_name, path):
+        """Scan using only rules from a specific gate"""
+        if gate_name != 'proxy-upgrade':
+            raise ValueError(f"Unknown gate: {gate_name}")
+        
+        from pathlib import Path
+        
+        # Proxy upgrade rules (9 locked rules)
+        proxy_rule_ids = [
+            'STORAGE_COLLISION', 'UUPS_UUID', 'MISSING_AUTH', 'ADMIN_SLOT_DRIFT',
+            'DELEGATECALL_UNTRUSTED', 'INITIALIZER_ABUSE', 'SELFDESTRUCT_PATHS',
+            'SOLIDITY_INCOMPATIBLE', 'UPGRADE_TIMELOCK'
+        ]
+        
+        # Filter rules to only include proxy upgrade rules
+        rules_to_use = [rule for rule in self.rules if rule.get('rule_id') in proxy_rule_ids]
+        
+        # Temporarily replace self.rules, scan, then restore
+        original_rules = self.rules
+        self.rules = rules_to_use
+        
+        try:
+            if Path(path).is_file():
+                findings = self.scan_file(str(path))
+            else:
+                findings = self.scan_directory(str(path))
+        finally:
+            self.rules = original_rules
+        
+        return findings
+

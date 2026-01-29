@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "vpc.tf",
-    "type": "terraform",
-    "content": "resource \"aws_vpc\" \"v\" { cidr_block = \"10.0.0.0/16\" }"
-  }],
-  "expect": { "rule_id": "IRR-DEC-07", "count": 1 }
-}

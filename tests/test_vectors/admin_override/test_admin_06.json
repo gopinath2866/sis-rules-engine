@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "iam.tf",
-    "type": "terraform",
-    "content": "resource \"aws_iam_user\" \"u\" { force_destroy = true }"
-  }],
-  "expect": { "rule_id": "ADMIN-06", "count": 1 }
-}

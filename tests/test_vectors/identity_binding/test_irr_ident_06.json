@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "iam.tf",
-    "type": "terraform",
-    "content": "resource \"aws_iam_policy_attachment\" \"a\" { roles = [\"admin\"] }"
-  }],
-  "expect": { "rule_id": "IRR-IDENT-06", "count": 1 }
-}

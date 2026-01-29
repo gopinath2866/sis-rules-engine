@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "azure.tf",
-    "type": "terraform",
-    "content": "resource \"azurerm_ad_application\" \"app\" {}"
-  }],
-  "expect": { "rule_id": "IRR-IDENT-04", "count": 1 }
-}

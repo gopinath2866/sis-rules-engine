@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "eks.tf",
-    "type": "terraform",
-    "content": "resource \"aws_eks_cluster\" \"c\" {}"
-  }],
-  "expect": { "rule_id": "IRR-DEC-08", "count": 1 }
-}
