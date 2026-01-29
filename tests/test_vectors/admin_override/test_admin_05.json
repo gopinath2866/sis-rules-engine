@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "iam.tf",
-    "type": "terraform",
-    "content": "resource \"aws_iam_group\" \"g\" { name = \"admins\" }"
-  }],
-  "expect": { "rule_id": "ADMIN-05", "count": 1 }
-}

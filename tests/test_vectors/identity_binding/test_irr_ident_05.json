@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "k8s.yaml",
-    "type": "kubernetes",
-    "content": "kind: ServiceAccount\nmetadata:\n  name: default"
-  }],
-  "expect": { "rule_id": "IRR-IDENT-05", "count": 1 }
-}

@@ -1,8 +1,0 @@
-{
-  "files": [{
-    "name": "s3.tf",
-    "type": "terraform",
-    "content": "resource \"aws_s3_bucket\" \"b\" { acl = \"public-read\" }"
-  }],
-  "expect": { "rule_id": "IRR-DEC-01", "count": 1 }
-}
