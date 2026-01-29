@@ -28,5 +28,3 @@ contract VulnerableProxy {
         require(success, "Delegatecall failed");
     }
 }
-// Additional comment to trigger CI
-// CI validation commit
