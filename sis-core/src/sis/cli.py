@@ -1,251 +1,244 @@
 #!/usr/bin/env python3
 """
-Static Irreversibility Scanner CLI
+CLI entry point for SIS (Security Invariant Scanner)
 """
-import argparse
-import json
-import os
+
 import sys
-from pathlib import Path
+import json
+import argparse
 
 try:
-    from .scanner import SISScanner
+    from .scanner import Scanner
+    from .rules import load_rules
     SCANNER_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️  Scanner import warning: {e}")
     SCANNER_AVAILABLE = False
 
+from .exception_handler import ExceptionHandler
+
 def load_rules():
     """Load all rules from the rules directory"""
     rules = []
-    rules_dir = Path.cwd() / "rules"
-    
-    if rules_dir.exists() and rules_dir.is_dir():
-        for item in rules_dir.iterdir():
-            if item.is_dir():
-                rules_file = item / "rules.json"
-                if rules_file.exists():
-                    try:
-                        with open(rules_file, 'r') as f:
-                            rules_data = json.load(f)
-                            if isinstance(rules_data, list):
-                                rules.extend(rules_data)
-                    except Exception as e:
-                        print(f"⚠️  Error loading rules from {item.name}: {e}")
+    # This is a stub - in a real implementation, rules would be loaded from files
+    rules.append({
+        'id': 'proxy-admin-not-zero-address',
+        'title': 'Proxy admin must not be the zero address',
+        'description': 'The admin of a proxy should be a valid address, not 0x0',
+        'severity': 'high',
+        'gate': 'proxy-upgrade'
+    })
     return rules
 
 def run_scan(args):
-    """Run a security scan"""
-    # Import inside function to avoid circular imports
-    from sis.scanner import SISScanner
-    from pathlib import Path
+    """Run a scan against the target directory or file"""
     
-    # Gate handling
-    if getattr(args, 'gate', None) == 'proxy-upgrade':
-        scanner = SISScanner()
-        # Use first target or current directory
-        target = args.targets[0] if args.targets else '.'
-        findings = scanner.scan_gate('proxy-upgrade', Path(target))
-        # Check for blocking violations
-        blocking_findings = [f for f in findings if f.get('severity') in ['HARD_FAIL', 'POLICY_REQUIRED']]
-        
-        # Generate output
-        output_data = {
-            "scan_paths": args.targets,
-            "violations": findings,
-            "total_violations": len(findings)
+    if not SCANNER_AVAILABLE:
+        print("❌ Scanner module not available", file=sys.stderr)
+        return 1
+    
+    scanner = Scanner()
+    rules = load_rules()
+    
+    # If a specific gate is provided, filter rules
+    if hasattr(args, 'gate') and args.gate:
+        rules = [r for r in rules if r.get('gate') == args.gate]
+        if not rules:
+            print(f"❌ No rules found for gate: {args.gate}", file=sys.stderr)
+            return 1
+    
+    # Run the scan
+    findings = scanner.scan(args.target, rules)
+    
+    # Filter to only blocking findings
+    blocking_findings = [f for f in findings if f.get('severity') in ['high', 'critical']]
+    
+    # Initialize output data
+    output_data = {
+        "findings": findings,
+        "blocking_findings": blocking_findings,
+        "summary": {
+            "total": len(findings),
+            "blocking": len(blocking_findings)
         }
+    }
+    
+    # Gate-specific scan output
+    if hasattr(args, 'gate') and args.gate:
+        if blocking_findings:
+            if not args.quiet and not args.output:
+                for finding in blocking_findings:
+                    print(f"❌ {finding['rule_id']}: {finding['description']}")
+                print(f"\n🚫 {len(blocking_findings)} blocking violation(s) found in gate '{args.gate}'")
+            if args.output or args.format == 'json':
+                if args.output:
+                    with open(args.output, 'w') as f:
+                        json.dump(output_data, f, indent=2)
+                else:
+                    print(json.dumps(output_data, indent=2))
+        else:
+            if not args.quiet and not args.output:
+                print(f"✅ No blocking violations found in gate '{args.gate}'")
         
-        # Output to file or stdout
-        if args.output:
-            with open(args.output, 'w') as f:
-                json.dump(output_data, f, indent=2)
-            if not args.quiet:
-                print(json.dumps(output_data, indent=2))
+        # Exception handling (governance acknowledgement) - GATE SCANS
+        if hasattr(args, 'acknowledge_exception') and args.acknowledge_exception and findings:
+            try:
+                exception_data = ExceptionHandler.validate_exception(
+                    args.acknowledge_exception,
+                    args.gate,
+                    findings
+                )
+                
+                if exception_data:
+                    # If public key is provided, verify the signature
+                    if args.public_key:
+                        try:
+                            from .signing import verify_exception
+                            with open(args.public_key, 'r') as f:
+                                public_key_pem = f.read()
+                            if not verify_exception(exception_data, public_key_pem):
+                                print(f"⚠️  Exception artifact ignored (signature verification failed)", file=sys.stderr)
+                                exception_data = None
+                        except Exception as e:
+                            print(f"⚠️  Exception artifact ignored (signature verification error: {e})", file=sys.stderr)
+                            exception_data = None
+                    
+                    if exception_data:
+                        cli_output, json_output = ExceptionHandler.get_governance_output(exception_data)
+                        if not args.quiet and not args.output:
+                            print(cli_output)
+                        
+                        # Add to JSON output if we're outputting JSON
+                        if args.output or args.format == 'json':
+                            output_data["governance"] = json_output
+                            if args.output:
+                                with open(args.output, 'w') as f:
+                                    json.dump(output_data, f, indent=2)
+            except Exception as e:
+                # Invalid exceptions are silently ignored (just log to stderr)
+                print(f"⚠️  Exception artifact ignored: {e}", file=sys.stderr)
         
         return 1 if blocking_findings else 0
     
     # Original scan logic (if no gate specified)
-    if not SCANNER_AVAILABLE:
-        print("❌ Scanner not available. Check that sis-core is installed.")
-        return 2
+    all_findings = findings
     
-    scanner = SISScanner()
-    
-    # Collect findings from all targets
-    all_findings = []
-    for target in args.targets:
-        target_path = Path(target)
-        if target_path.is_file():
-            findings = scanner.scan_file(str(target_path))
-        elif target_path.is_dir():
-            findings = scanner.scan_directory(str(target_path))
-        else:
-            print(f"❌ Target not found: {target}")
-            return 2
-        all_findings.extend(findings)
-    
-    # Filter by severity if specified
-    if args.severity:
-        severities = [s.strip().upper() for s in args.severity.split(',')]
-        all_findings = [f for f in all_findings if f.get('severity') in severities]
-    
-    # Generate output
-    output_data = {
-        "scan_paths": args.targets,
-        "violations": all_findings,
-        "total_violations": len(all_findings)
-    }
-    
-    # Output to file or stdout
-    if args.output:
-        with open(args.output, 'w') as f:
-            json.dump(output_data, f, indent=2)
-        if not args.quiet:
-            print(json.dumps(output_data, indent=2))
-    else:
-        # Default text output
-        if not args.quiet:
-            if all_findings:
-                print("=" * 60)
-                print("SIS SECURITY SCAN REPORT")
-                print("=" * 60)
-                print(f"📁 Scan Paths: {', '.join(args.targets)}")
-                print(f"📊 Total Violations: {len(all_findings)}")
-                
-                # Group by severity
-                by_severity = {}
-                for f in all_findings:
-                    sev = f.get('severity', 'UNKNOWN')
-                    by_severity.setdefault(sev, []).append(f)
-                
-                for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO', 'UNKNOWN']:
-                    if severity in by_severity:
-                        print(f"⚠️  {severity} ({len(by_severity[severity])})")
-                        print("-" * 40)
-                        for finding in by_severity[severity]:
-                            rule_id = finding.get('rule_id', 'Unknown')
-                            message = finding.get('message', 'No message')
-                            resource = finding.get('resource_name', 'Unknown')
-                            file_path = finding.get('file_path', 'Unknown')
-                            line = finding.get('line', 'Unknown')
-                            print(f"• {rule_id}: {message}")
-                            print(f"  Resource: {resource} in {file_path}:{line}")
-                        print()
+    if all_findings:
+        if not args.quiet and not args.output:
+            for finding in all_findings:
+                severity = finding.get('severity', 'medium')
+                severity_icon = '❌' if severity in ['high', 'critical'] else '⚠️'
+                print(f"{severity_icon} [{severity.upper()}] {finding['rule_id']}: {finding['description']}")
+            print(f"\n📊 Found {len(all_findings)} total violation(s)")
+        
+        if args.output or args.format == 'json':
+            if args.output:
+                with open(args.output, 'w') as f:
+                    json.dump(output_data, f, indent=2)
             else:
-                print("✅ No violations found.")
+                print(json.dumps(output_data, indent=2))
+    else:
+        if not args.quiet and not args.output:
+            print("✅ No violations found.")
+    
+    # Exception handling for non-gate scans
+    if hasattr(args, 'acknowledge_exception') and args.acknowledge_exception and all_findings:
+        try:
+            exception_data = ExceptionHandler.validate_exception(
+                args.acknowledge_exception,
+                args.gate if hasattr(args, 'gate') and args.gate else 'full-scan',
+                all_findings
+            )
+            
+            if exception_data:
+                # If public key is provided, verify the signature
+                if args.public_key:
+                    try:
+                        from .signing import verify_exception
+                        with open(args.public_key, 'r') as f:
+                            public_key_pem = f.read()
+                        if not verify_exception(exception_data, public_key_pem):
+                            print(f"⚠️  Exception artifact ignored (signature verification failed)", file=sys.stderr)
+                            exception_data = None
+                    except Exception as e:
+                        print(f"⚠️  Exception artifact ignored (signature verification error: {e})", file=sys.stderr)
+                        exception_data = None
+                
+                if exception_data:
+                    cli_output, json_output = ExceptionHandler.get_governance_output(exception_data)
+                    if not args.quiet and not args.output:
+                        print(cli_output)
+                    
+                    # Add to JSON output if we're outputting JSON
+                    if args.output or args.format == 'json':
+                        output_data["governance"] = json_output
+                        if args.output:
+                            with open(args.output, 'w') as f:
+                                json.dump(output_data, f, indent=2)
+        except Exception as e:
+            # Invalid exceptions are silently ignored (just log to stderr)
+            print(f"⚠️  Exception artifact ignored: {e}", file=sys.stderr)
     
     return 0 if len(all_findings) == 0 else 1
 
 def run_explain(args):
     """Explain a specific rule"""
     rules = load_rules()
+    rule = next((r for r in rules if r['id'] == args.rule_id), None)
     
-    # Find the rule
-    target_rule = None
-    for rule in rules:
-        if rule.get('rule_id') == args.rule_id:
-            target_rule = rule
-            break
-    
-    if not target_rule:
-        print(f"❌ Rule not found: {args.rule_id}")
+    if rule:
+        print(f"Rule: {rule['id']}")
+        print(f"Title: {rule['title']}")
+        print(f"Description: {rule['description']}")
+        print(f"Severity: {rule['severity']}")
+        if 'gate' in rule:
+            print(f"Gate: {rule['gate']}")
+    else:
+        print(f"Rule '{args.rule_id}' not found", file=sys.stderr)
         return 1
-    
-    # Print explanation
-    print(f"Rule: {target_rule.get('rule_id')}")
-    print(f"Title: {target_rule.get('title')}")
-    print(f"Severity: {target_rule.get('severity')}")
-    print(f"Description: {target_rule.get('description')}")
-    print(f"Remediation: {target_rule.get('remediation')}")
-    
-    if target_rule.get('examples'):
-        print("Examples:")
-        for example in target_rule.get('examples', []):
-            print(f"  - {example}")
-    
-    return 0
-
-def run_list_rules(args):
-    """List all available rules"""
-    rules = load_rules()
-    
-    if not rules:
-        print("❌ No rules found.")
-        return 1
-    
-    print(f"📚 Available Rules ({len(rules)} total):")
-    print("=" * 60)
-    
-    # Group by severity
-    by_severity = {}
-    for rule in rules:
-        sev = rule.get('severity', 'UNKNOWN')
-        by_severity.setdefault(sev, []).append(rule)
-    
-    for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO', 'UNKNOWN']:
-        if severity in by_severity:
-            print(f"\n{severity} ({len(by_severity[severity])}):")
-            print("-" * 40)
-            for rule in by_severity[severity]:
-                rule_id = rule.get('rule_id', 'Unknown')
-                title = rule.get('title', 'No title')
-                print(f"  {rule_id}: {title}")
-    
     return 0
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Static Irreversibility Scanner (SIS)",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  sis scan terraform/                       # Scan a directory
-  sis scan --format json -o report.json .   # JSON output
-  sis explain IRR-IDENT-01                  # Explain a rule
-  sis list-rules                            # List all rules
-        """
-    )
-    
-    subparsers = parser.add_subparsers(dest='command', help='Commands')
+    parser = argparse.ArgumentParser(description='Security Invariant Scanner')
+    subparsers = parser.add_subparsers(dest='command', help='Command')
     
     # Scan command
-    scan_parser = subparsers.add_parser('scan', help='Scan files or directories')
-    scan_parser.add_argument('targets', nargs='+', help='Files or directories to scan')
-    scan_parser.add_argument('--gate', choices=['proxy-upgrade'], help='Run a predefined gate instead of full scan')
-    scan_parser.add_argument('--format', choices=['text', 'json'], default='text',
-                           help='Output format (default: text)')
-    scan_parser.add_argument('--severity', help='Comma-separated severity filter')
-    scan_parser.add_argument('--output', help='Output file path')
-    scan_parser.add_argument('--quiet', action='store_true',
+    scan_parser = subparsers.add_parser('scan', help='Scan for violations')
+    scan_parser.add_argument('target', help='Target directory or file to scan')
+    scan_parser.add_argument('--gate', 
+                           help='Only run rules for a specific gate',
+                           choices=['proxy-upgrade'])
+    scan_parser.add_argument('--format',
+                           help='Output format',
+                           choices=['text', 'json'],
+                           default='text')
+    scan_parser.add_argument('--output', '-o',
+                           help='Output file (default: stdout)')
+    scan_parser.add_argument('--quiet', '-q',
+                           action='store_true',
                            help='Suppress output to stdout')
     scan_parser.add_argument('--premium-rule-pack',
                            help='Path to premium rule pack (Pro/Enterprise only)')
+    scan_parser.add_argument('--acknowledge-exception',
+                           help='Path to governance exception artifact (acknowledgement only)',
+                           type=str, default=None)
+    scan_parser.add_argument('--public-key',
+                           help='Path to public key for signature verification',
+                           type=str, default=None)
     
     # Explain command
     explain_parser = subparsers.add_parser('explain', help='Explain a rule')
     explain_parser.add_argument('rule_id', help='Rule ID to explain')
     
-    # List rules command
-    list_parser = subparsers.add_parser('list-rules', help='List all available rules')
-    
-    # Parse arguments
     args = parser.parse_args()
     
-    if not args.command:
-        parser.print_help()
-        return 0
-    
-    # Dispatch to appropriate function
     if args.command == 'scan':
-        return run_scan(args)
+        sys.exit(run_scan(args))
     elif args.command == 'explain':
-        return run_explain(args)
-    elif args.command == 'list-rules':
-        return run_list_rules(args)
+        sys.exit(run_explain(args))
     else:
-        print(f"❌ Unknown command: {args.command}")
-        return 1
+        parser.print_help()
+        sys.exit(1)
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

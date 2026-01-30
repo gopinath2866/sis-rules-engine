@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "exception_id": "sha256_placeholder_for_example",
+  "created_at": "2024-01-30T12:00:00Z",
+
+  "sis_report": {
+    "report_hash": "abc123...",
+    "report_path": "reports/full_scan.json",
+    "sis_version": "1.0",
+    "gate": "proxy-upgrade"
+  },
+
+  "scope": {
+    "rule_id": "proxy-admin-not-zero-address",
+    "target": "0x1234567890123456789012345678901234567890",
+    "network": "mainnet"
+  },
+
+  "justification": {
+    "reason": "Emergency security patch requires admin access for 72-hour window. Multi-sig governance approved via Snapshot vote #123.",
+    "risk_acknowledged": true,
+    "approving_authority": {
+      "name": "Security Committee",
+      "role": "Multi-sig Signer",
+      "organization": "DAO Treasury"
+    }
+  },
+
+  "validity": {
+    "expires_at": "2024-04-30T12:00:00Z",
+    "max_duration_days": 90
+  },
+
+  "enforcement_effect": "ACKNOWLEDGED_ONLY",
+
+  "invariants": {
+    "does_not_mark_safe": true,
+    "does_not_modify_findings": true,
+    "audit_visibility": "permanent"
+  },
+
+  "signature": {
+    "type": "detached",
+    "required": true,
+    "signer_identity": "dao:example-dao",
+    "signature_hash": "sha256_placeholder"
+  }
+}

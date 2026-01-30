@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "exception_id": "sha256(canonical-json-without-signature)",
+  "created_at": "RFC3339 timestamp",
+
+  "sis_report": {
+    "report_hash": "sha256",
+    "report_path": "path/to/sis-report.json",
+    "sis_version": "string",
+    "gate": "proxy-upgrade"
+  },
+
+  "scope": {
+    "rule_id": "string",
+    "target": "proxy-address-or-identifier",
+    "network": "mainnet | testnet | devnet"
+  },
+
+  "justification": {
+    "reason": "string (free text, mandatory)",
+    "risk_acknowledged": true,
+    "approving_authority": {
+      "name": "string",
+      "role": "string",
+      "organization": "string"
+    }
+  },
+
+  "validity": {
+    "expires_at": "RFC3339 timestamp",
+    "max_duration_days": 90
+  },
+
+  "enforcement_effect": "ACKNOWLEDGED_ONLY",
+
+  "invariants": {
+    "does_not_mark_safe": true,
+    "does_not_modify_findings": true,
+    "audit_visibility": "permanent"
+  },
+
+  "signature": {
+    "type": "detached",
+    "required": true,
+    "signer_identity": "did / pgp / org-id",
+    "signature_hash": "sha256"
+  }
+}
