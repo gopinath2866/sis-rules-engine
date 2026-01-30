@@ -2,20 +2,17 @@
   "schema_version": "1.0",
   "exception_id": "sha256_placeholder_for_example",
   "created_at": "2024-01-30T12:00:00Z",
-
   "sis_report": {
     "report_hash": "abc123...",
     "report_path": "reports/full_scan.json",
     "sis_version": "1.0",
     "gate": "proxy-upgrade"
   },
-
   "scope": {
     "rule_id": "proxy-admin-not-zero-address",
     "target": "0x1234567890123456789012345678901234567890",
     "network": "mainnet"
   },
-
   "justification": {
     "reason": "Emergency security patch requires admin access for 72-hour window. Multi-sig governance approved via Snapshot vote #123.",
     "risk_acknowledged": true,
@@ -25,24 +22,20 @@
       "organization": "DAO Treasury"
     }
   },
-
   "validity": {
     "expires_at": "2024-04-30T12:00:00Z",
     "max_duration_days": 90
   },
-
   "enforcement_effect": "ACKNOWLEDGED_ONLY",
-
   "invariants": {
     "does_not_mark_safe": true,
     "does_not_modify_findings": true,
     "audit_visibility": "permanent"
   },
-
   "signature": {
     "type": "detached",
     "required": true,
-    "signer_identity": "dao:example-dao",
-    "signature_hash": "sha256_placeholder"
+    "signer_identity": "RSA2048",
+    "signature_hash": "OOBgHCoBJ2TooNHrEtSoYnz08Gf1j48Dm5PTTZGvo8SwNjCI5vyUmhVCCLskv9V1/gW6m3LB6lTk8VXZpQvvMQPDbzILWzpv0lgTydzM+Hxhi2SvR1meocmFQPKbhKRb2VhedY/0jI/rNuZn1OvCI/qWs5hqIn9Oi281HydOZaRTpEvmWD9Fihk1PFm2aiK0JO63fh9nMjsc2yBoe2m3umx7TA3oJPcB2IjyPFIpszF/8zTvh/ATCSAedNUF7c6NpDOXjJBTVA7UzAf1bL8uO45K4gXPNmfuQ2xmphu4dB/P5/b6zmUInWBqw9Dikfaa/KIWPOS5KbjPN4xZfts+/w=="
   }
 }

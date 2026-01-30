@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+"""
+SIS CLI Wrapper
+Runs SIS scanner with proper Python path setup.
+"""
+
+import sys
+import os
+
+# Add sis-core/src to the Python path
+sis_core_dir = os.path.join(os.path.dirname(__file__), 'sis-core', 'src')
+sys.path.insert(0, sis_core_dir)
+
+# Now import and run the CLI
+from sis.cli import main
+
+if __name__ == '__main__':
+    sys.exit(main())
