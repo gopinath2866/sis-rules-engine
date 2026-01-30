@@ -16,6 +16,7 @@ except ImportError as e:
     SCANNER_AVAILABLE = False
 
 from .exception_handler import ExceptionHandler
+from .provenance_emitter import ProvenanceEmitter
 
 def load_rules():
     """Load all rules from the rules directory"""
@@ -152,6 +153,32 @@ def run_scan(args):
             
             if exception_data:
                 # If public key is provided, verify the signature
+                # Emit provenance (fire-and-forget, constitutional vent)
+                try:
+                    context_id = ProvenanceEmitter.create_execution_context()
+                    ProvenanceEmitter.emit_exception_provenance(
+                        exception_data=exception_data,
+                        verification_result=True,
+                        public_key_fingerprint=args.public_key,
+                        execution_context=context_id
+                    )
+                except Exception:
+                    # Constitutional: Provenance emission failures are non-events
+                    pass
+                
+                # Emit provenance (fire-and-forget, constitutional vent)
+                try:
+                    context_id = ProvenanceEmitter.create_execution_context()
+                    ProvenanceEmitter.emit_exception_provenance(
+                        exception_data=exception_data,
+                        verification_result=True,
+                        public_key_fingerprint=args.public_key,
+                        execution_context=context_id
+                    )
+                except Exception:
+                    # Constitutional: Provenance emission failures are non-events
+                    pass
+                
                 if args.public_key:
                     try:
                         from .signing import verify_exception
