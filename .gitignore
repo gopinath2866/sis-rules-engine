@@ -65,3 +65,16 @@ reports/
 
 # Logs
 *.log
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Test results
+test-results/
+*.xml
+*.json
+
+# Temporary test files
+test-*.txt
