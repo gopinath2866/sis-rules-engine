@@ -1,48 +1,58 @@
-"""
-SIS Scanner
-"""
-import os
-from typing import List, Dict, Any
-from .parsers.terraform_simple_fixed import parse_terraform_simple
-from .engine import validate_resources
+"""Terraform HCL2 scanner for irreversible patterns."""
+
+from .parsers.terraform_simple import parse_terraform_simple
+
 
 class Scanner:
-    """SIS Scanner"""
+    """Scan Terraform files for irreversible infrastructure patterns."""
     
-    def scan(self, target: str, rules: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """
-        Scan a target file or directory against given rules.
+    def scan(self, file_path, rules):
+        """Scan a Terraform file for irreversible patterns."""
+        findings = []
         
-        Args:
-            target: Path to file or directory
-            rules: List of rules to check against
+        try:
+            with open(file_path, 'r') as f:
+                content = f.read()
+            
+            # Parse Terraform content
+            resources = parse_terraform_simple(content)
+            
+            # Check each resource against each rule
+            for resource in resources:
+                resource_type = resource.get('kind', '')
+                resource_name = resource.get('name', '')
+                config = resource.get('attributes', {})
+                
+                for rule in rules:
+                    if self._check_rule(rule, config):
+                        findings.append({
+                            "rule_id": rule.get("rule_id", "UNKNOWN"),
+                            "message": rule.get("message", ""),
+                            "severity": rule.get("severity", "MEDIUM"),
+                            "resource_type": resource_type,
+                            "resource_name": resource_name,
+                            "file_path": str(file_path),
+                            "line": resource.get('line', 1)
+                        })
+            
+        except Exception as e:
+            # Don't crash on parse errors
+            pass
         
-        Returns:
-            List of violations found
-        """
-        # For now, only handle single files
-        if not os.path.exists(target):
-            return []
+        return findings
+    
+    def _check_rule(self, rule, config):
+        """Check if a rule matches the configuration."""
+        rule_id = rule.get("rule_id")
         
-        if os.path.isdir(target):
-            return []
+        # IRR-DEC-01: deletion_protection = true
+        if rule_id == "IRR-DEC-01":
+            return config.get("deletion_protection") == True
         
-        # Check file extension
-        if not target.endswith('.tf'):
-            return []
+        # IRR-DEC-02: lifecycle.prevent_destroy = true
+        if rule_id == "IRR-DEC-02":
+            lifecycle = config.get("lifecycle", [{}])[0] if isinstance(config.get("lifecycle"), list) else config.get("lifecycle", {})
+            return lifecycle.get("prevent_destroy") == True
         
-        # Read and parse the file
-        with open(target, 'r') as f:
-            content = f.read()
-        
-        # Parse Terraform content
-        resources = parse_terraform_simple(content)
-        
-        # Add file path to each resource for reporting
-        for resource in resources:
-            resource['file_path'] = target
-        
-        # Validate resources against rules
-        violations = validate_resources(resources, rules)
-        
-        return violations
+        # Add more rule checks here as needed
+        return False
