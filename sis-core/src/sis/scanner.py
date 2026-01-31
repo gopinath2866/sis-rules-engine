@@ -1,50 +1,48 @@
 """
-Scanner module for SIS.
-Currently a stub implementation for demonstration.
-In production, this would contain actual scanning logic.
+SIS Scanner
 """
+import os
+from typing import List, Dict, Any
+from .parsers.terraform_simple_fixed import parse_terraform_simple
+from .engine import validate_resources
 
-class SISScanner:
-    """Scanner for Security Invariant violations."""
+class Scanner:
+    """SIS Scanner"""
     
-    def scan(self, target, rules):
+    def scan(self, target: str, rules: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
-        Scan a target for violations.
+        Scan a target file or directory against given rules.
         
         Args:
-            target: Directory or file to scan
-            rules: List of rules to check
-            
-        Returns:
-            List of findings
-        """
-        # Stub implementation - returns empty list
-        return []
-    
-    def scan_gate(self, gate_name, target_path):
-        """
-        Scan a specific gate for violations.
+            target: Path to file or directory
+            rules: List of rules to check against
         
-        Args:
-            gate_name: Name of the gate to scan
-            target_path: Path to scan
-            
         Returns:
-            List of findings for the specified gate
+            List of violations found
         """
-        # Stub implementation - returns test violations for proxy-upgrade gate
-        if gate_name == 'proxy-upgrade':
-            return [
-                {
-                    'rule_id': 'proxy-admin-not-zero-address',
-                    'description': 'Proxy admin is set to zero address',
-                    'severity': 'high',
-                    'gate': 'proxy-upgrade',
-                    'resource': 'test_resource',
-                    'location': {'file': 'test.tf', 'line': 1}
-                }
-            ]
-        return []
-
-# Create an alias for backward compatibility
-Scanner = SISScanner
+        # For now, only handle single files
+        if not os.path.exists(target):
+            return []
+        
+        if os.path.isdir(target):
+            return []
+        
+        # Check file extension
+        if not target.endswith('.tf'):
+            return []
+        
+        # Read and parse the file
+        with open(target, 'r') as f:
+            content = f.read()
+        
+        # Parse Terraform content
+        resources = parse_terraform_simple(content)
+        
+        # Add file path to each resource for reporting
+        for resource in resources:
+            resource['file_path'] = target
+        
+        # Validate resources against rules
+        violations = validate_resources(resources, rules)
+        
+        return violations

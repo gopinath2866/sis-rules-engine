@@ -16,16 +16,15 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
-# Virtual environments
-.env
-.venv
-env/
+# Virtual Environments
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
@@ -37,39 +36,32 @@ venv.bak/
 *.swo
 *~
 
-# Test results
-.coverage
-htmlcov/
-.coverage.*
-.pytest_cache/
-.mypy_cache/
-test-results/
-*.xml
-*.html
-
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Monetization temporary files
-*_plan.md
-*_packages.md
-*_gig.md
-*_offer.md
-*_outreach.txt
-portfolio.html
-send_emails.py
-monetize.py
-revenue_projections.py
-service_packages.py
+# SIS Specific
+internal/forensics/
+test-results/
+reports/
+*.tar.gz
+*.tgz
 
-# Secrets
-.env
-*.key
-*.pem
-*.cert
+# Test files (keep canonical ones)
+!test_canonical_*.tf
+
+# Backups
 *.backup
 *.bak
-*.tf
-rules_backup/
-__pycache__/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
